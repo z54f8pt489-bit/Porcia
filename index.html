@@ -1,0 +1,634 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://world.openfoodfacts.org https://ru.openfoodfacts.org; form-action 'none'; media-src 'self' blob: mediastream:; worker-src 'self'; base-uri 'self'"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Порция"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#f6f5ee"><meta name="description" content="Личный дневник питания: еда, калории и БЖУ. Данные хранятся на устройстве."><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="favicon.png"><style>:root{--bg:#f6f5ee;--paper:#fffef9;--ink:#203c33;--muted:#778178;--line:#e4e6dc;--green:#35684c;--lime:#d9edb3;--orange:#c38a49;--blue:#6697a5;--radius:24px}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}button,input,select,textarea{font:inherit}button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{opacity:.5;cursor:wait}button:focus-visible,a:focus-visible{outline:3px solid #9cbc74;outline-offset:4px}button{color:inherit}a{color:inherit}h1,h2,h3,p{margin:0}h1{font-size:40px;line-height:1.15;font-weight:650;letter-spacing:-1.5px}h2{font-size:23px;letter-spacing:-.5px}h3{font-size:16px;font-weight:600}.shell{max-width:1440px;margin:auto;display:grid;grid-template-columns:240px 1fr;min-height:100dvh}.sidebar{padding:40px 26px;position:sticky;top:0;height:100dvh;border-right:1px solid var(--line);display:flex;flex-direction:column}.brand{display:flex;gap:12px;text-decoration:none;font-size:29px;line-height:1.15;font-weight:700;letter-spacing:-1px;align-items:center}.brand-mark{height:49px;width:49px;background:var(--ink);color:var(--lime);border-radius:16px;display:grid;place-items:center;font:italic 38px Georgia}.brand-sub{display:block;font-size:10px;font-weight:400;letter-spacing:.2px;color:var(--muted);margin-top:5px}nav{display:flex;flex-direction:column;gap:8px;margin-top:56px}nav a{display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:13px;text-decoration:none;color:#69766a;font-weight:550}nav a.active{background:#e4ebd9;color:var(--ink)}svg{height:21px;width:21px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.side-note{margin-top:auto;color:var(--muted);font-size:12px;padding:24px 6px 4px}.side-note p{margin-top:12px}.local-dot{display:inline-block;width:6px;height:6px;background:#7ba263;border-radius:50%;margin-right:5px}main{padding:32px 48px 60px;min-width:0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:35px}.eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted)}.pill{font-size:11px;border:1px solid #dce2d5;border-radius:20px;padding:6px 11px;color:var(--green)}.title-row{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:26px}.subtitle{color:var(--muted);font-size:13px;margin-top:9px}.date-nav{display:flex;align-items:center;gap:6px;background:var(--paper);padding:5px;border:1px solid var(--line);border-radius:13px}.date-nav input{width:126px;border:0;background:none;padding:8px 0;font-size:13px;min-height:35px}.icon-button{border:0;background:none;height:38px;min-width:38px;border-radius:12px;display:inline-grid;place-items:center;font-size:25px}.icon-button:hover{background:#e9eddf}.dashboard{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}.energy{border-radius:var(--radius);background:var(--ink);color:var(--paper);padding:26px;position:relative;overflow:hidden;min-height:260px;display:flex;flex-direction:column;justify-content:space-between}.energy-label{font-size:13px;color:#c6d3c0}.energy-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}.energy-number{font-size:44px;letter-spacing:-2px;line-height:1.15;font-weight:600}.energy-number small{font-size:14px;letter-spacing:0;color:#c6d3c0}.energy-caption{font-size:12px;color:#c6d3c0;margin-top:7px}.ring{border-radius:50%;background:conic-gradient(var(--lime) var(--progress),#3d574a 0);width:122px;height:122px;display:grid;place-items:center;flex:none}.ring-inner{border-radius:50%;height:104px;width:104px;background:var(--ink);display:grid;place-content:center;text-align:center}.ring strong{font-size:24px;font-weight:500;letter-spacing:-1px}.ring small{font-size:10px;color:#c6d3c0}.energy-foot{border-top:1px solid #486051;padding-top:14px;margin-top:17px;font-size:12px;display:flex;justify-content:space-between;gap:10px;color:#dce6d2}.macros{display:grid;grid-template-columns:1fr 1fr;gap:12px}.macro{padding:19px 19px 15px;border:1px solid var(--line);background:var(--paper);border-radius:20px;min-width:0}.macro-label{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}.dot{width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block}.fat .dot{background:var(--orange)}.carbs .dot{background:var(--blue)}.macro strong{font-size:28px;font-weight:550;line-height:1.6;letter-spacing:-1px}.macro strong small{font-size:13px;font-weight:400;letter-spacing:0;color:var(--muted)}.bar{height:4px;background:#eceee4;border-radius:6px;overflow:hidden;margin:5px 0 8px}.bar i{display:block;height:100%;background:var(--green);border-radius:6px}.fat .bar i{background:var(--orange)}.micro{font-size:11px;color:var(--muted);line-height:1.5}.carbs{display:flex;justify-content:space-between;align-items:center;grid-column:1/-1;padding:13px 20px}.carbs strong{font-size:23px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:30px 0 14px}.section-head h2{font-size:21px}.primary,.secondary,.danger{border:0;border-radius:12px;padding:11px 17px;font-size:13px;min-height:44px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}.primary{background:var(--green);color:white}.primary:hover{background:#285339}.secondary{background:#eaf0e0;color:var(--green)}.danger{background:#f9e7df;color:#954f3b}.text-button{background:none;border:0;color:var(--green);font-size:12px;padding:7px}.meals{display:grid;gap:12px}.meal{border:1px solid var(--line);background:var(--paper);border-radius:20px;overflow:hidden}.meal-head{display:flex;align-items:center;gap:13px;padding:18px 20px}.meal-icon{width:37px;height:37px;display:grid;place-items:center;background:#f1f0e5;border-radius:13px;color:#8a8d70}.meal-head p{font-size:11px;color:var(--muted);margin-top:2px}.meal-head .grow{flex:1}.meal-kcal{font-size:16px;font-weight:600}.meal-kcal small{font-size:10px;color:var(--muted);font-weight:400}.meal .icon-button{color:var(--green);background:#f0f4e8;height:32px;min-width:32px;font-size:22px}.entry{border:0;border-top:1px solid #eff0e9;padding:13px 20px;width:100%;background:none;text-align:left;display:flex;gap:12px;align-items:center}.entry:hover{background:#f7f8f1}.entry img{width:42px;height:42px;object-fit:cover;border-radius:11px}.entry-title{font-size:13px;line-height:1.35}.entry-info{font-size:11px;color:var(--muted);margin-top:4px}.entry-values{margin-left:auto;text-align:right;white-space:nowrap;font-size:14px}.entry-values small{display:block;font-size:10px;color:var(--muted)}.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.small-card{border:1px solid var(--line);padding:19px;border-radius:20px;background:var(--paper)}.water-num{font-size:25px;margin:8px 0}.water-controls{display:flex;gap:8px}.water-controls button{border:1px solid var(--line);border-radius:9px;background:white;padding:7px 10px;font-size:12px}.check{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px}.check input{accent-color:var(--green);width:19px;height:19px;flex:none}.complete-card p{margin:10px 0 14px}.note{font-size:12px;color:var(--muted);margin:16px 0;line-height:1.65}.notice{border-radius:15px;background:#e9eddf;padding:15px 18px;font-size:12px;line-height:1.65;margin:18px 0;color:#53654d}.empty{text-align:center;padding:35px 18px;color:var(--muted)}.empty svg{height:36px;width:36px;color:#a9b59d;margin-bottom:10px}.empty h3{color:var(--ink);margin-bottom:5px}.empty p{font-size:12px;margin-bottom:14px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}.search{flex:1;min-width:140px}.food-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.food-card{background:var(--paper);border:1px solid var(--line);border-radius:19px;padding:18px;display:flex;flex-direction:column;gap:8px}.food-card .food-data{font-size:12px;color:var(--muted)}.food-card .food-actions{display:flex;justify-content:space-between;gap:7px;margin-top:auto;padding-top:5px}.food-card h3{font-size:15px}.badge{font-size:10px;color:#8a7454}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.settings-grid .small-card{padding:23px}.settings-grid h2{font-size:19px;margin-bottom:12px}label.field{display:block;font-size:12px;color:#536556;margin-bottom:14px}input:not([type=checkbox]),select,textarea{width:100%;background:white;border:1px solid #dce0d3;border-radius:11px;color:var(--ink);padding:12px;min-height:46px;outline:none;font-size:16px}input:focus,textarea:focus,select:focus{border-color:#668e5d;box-shadow:0 0 0 2px #dfe9d1}textarea{resize:vertical;min-height:75px}label.field span{display:block;margin-bottom:6px}dialog{border:0;padding:0;border-radius:25px;width:min(530px,calc(100% - 24px));max-height:90dvh;background:var(--bg);color:var(--ink);box-shadow:0 18px 100px #10241640}dialog::backdrop{background:#172e245c;backdrop-filter:blur(3px)}.dialog-head{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);z-index:3;padding:20px 23px 12px;border-bottom:1px solid var(--line)}.dialog-head h2{font-size:21px}#dialog-body{padding:22px 23px 25px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.form-grid .full{grid-column:1/-1}.macro-inputs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.macro-inputs input{padding:10px 8px}.mode-switch{display:flex;border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-bottom:17px}.mode-switch button{width:50%;background:var(--paper);border:0;font-size:12px;padding:11px}.mode-switch button.active{background:#e0eacb;font-weight:600}.form-actions{display:flex;gap:9px;margin-top:20px}.form-actions .primary{flex:1}.photo-preview{width:100%;max-height:170px;object-fit:cover;border-radius:13px;margin-bottom:12px}.photo-control{display:flex;align-items:center;gap:10px;margin:14px 0}.file-label{cursor:pointer}.file-label input{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0}.portion-summary{background:#e7eddb;border-radius:12px;padding:13px;font-size:12px;margin-bottom:15px}.error{color:#a64633;font-size:13px;margin:12px 0}.warning{position:sticky;top:0;padding:12px 20px;color:#813e2f;background:#ffe7d8;z-index:30;font-size:13px}.history-list{display:grid;gap:10px;margin-top:20px}.history-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:17px;background:var(--paper);padding:18px;text-align:left}.history-row span{font-size:12px;color:var(--muted)}.history-row strong{font-size:16px;display:block}.history-row .right{text-align:right}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.stat{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:18px}.stat strong{display:block;font-size:27px;font-weight:550}.stat span{font-size:11px;color:var(--muted)}.week-chart{display:flex;gap:12px;align-items:flex-end;height:145px;margin:20px 0 8px;border-bottom:1px solid var(--line);padding:0 4px 5px}.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:10px;color:var(--muted);gap:4px}.chart-bar{width:100%;max-width:44px;background:#bccd9f;border-radius:6px 6px 0 0;min-height:2px}.chart-bar.partial{background:repeating-linear-gradient(135deg,#dbe2cf,#dbe2cf 5px,#eef1e5 5px,#eef1e5 10px)}.ingredient{padding:12px;background:#fffef9;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:space-between;font-size:13px;margin-bottom:8px}.ingredient small{color:var(--muted);display:block}.recipe-total{font-size:13px;padding:14px 0}.install-steps{padding-left:20px;color:#60705f;font-size:13px}.install-steps li{padding:5px 0}#toast{position:fixed;bottom:30px;left:50%;transform:translate(-50%,20px);background:var(--ink);color:white;padding:12px 20px;border-radius:12px;box-shadow:0 6px 20px #203c3322;opacity:0;pointer-events:none;transition:.2s;z-index:100;font-size:13px;max-width:90vw;text-align:center}#toast.visible{opacity:1;transform:translate(-50%,0)}.loading{padding:50px;text-align:center;color:var(--muted)}.stack{display:flex;flex-direction:column;gap:10px}.report-text{min-height:250px;font-size:13px;line-height:1.5}.source-link{font-size:12px}.full-width{width:100%}[hidden]{display:none!important}
+@media(min-width:1250px){main{padding-right:65px;padding-left:65px}.energy-number{font-size:50px}.ring{width:135px;height:135px}.ring-inner{width:117px;height:117px}}
+@media(max-width:1000px){.shell{grid-template-columns:180px 1fr}.sidebar{padding:30px 15px}.brand{font-size:25px}.brand-mark{width:40px;height:43px}.brand-sub{font-size:8px}main{padding:28px 25px 45px}.energy{padding:21px}.energy-number{font-size:37px}.ring{width:100px;height:100px}.ring-inner{width:84px;height:84px}.ring strong{font-size:21px}.macro{padding:17px 13px}.dashboard{gap:12px}}
+@media(max-width:700px){.shell{display:block}.sidebar{padding:0;height:auto;position:static;border:0}.brand,.side-note{display:none}nav{position:fixed;bottom:0;left:0;right:0;margin:0;padding:8px 9px calc(9px + env(safe-area-inset-bottom));background:#fffef9f5;border-top:1px solid #e4e6dc;backdrop-filter:blur(20px);flex-direction:row;justify-content:space-around;gap:2px;z-index:20}nav a{padding:6px 11px;flex-direction:column;gap:3px;font-size:9px;border-radius:12px;min-width:57px}nav a svg{width:22px;height:22px}main{padding:calc(22px + env(safe-area-inset-top)) 20px calc(105px + env(safe-area-inset-bottom))}.top{margin-bottom:25px}.eyebrow{font-size:9px;letter-spacing:1.6px}.pill{font-size:10px;padding:5px 9px}h1{font-size:33px;letter-spacing:-1.2px}.title-row{align-items:flex-start;gap:15px;flex-direction:column;margin-bottom:19px}.title-row .date-nav{align-self:stretch;justify-content:space-between;padding:3px 6px}.date-nav input{width:140px;padding:7px 5px;text-align:center;min-height:32px;font-size:13px}.date-nav .icon-button{height:31px;min-width:37px}.subtitle{font-size:12px;margin-top:6px}.dashboard{grid-template-columns:1fr;gap:12px}.energy{min-height:224px;padding:23px}.energy-number{font-size:48px}.energy-inner{margin-top:9px}.ring{height:116px;width:116px}.ring-inner{height:100px;width:100px}.ring strong{font-size:24px}.energy-foot{margin-top:14px;padding-top:11px;font-size:11px}.macros{gap:10px}.macro{border-radius:17px;padding:14px 16px}.macro strong{font-size:28px;line-height:1.45}.macro-label{font-size:12px}.carbs{padding:10px 16px}.carbs strong{font-size:20px}.section-head{margin-top:25px}.section-head h2{font-size:21px}.section-head .primary{font-size:12px;padding:10px 13px;min-height:40px}.meal-head{padding:16px}.entry{padding:12px 16px}.entry-title{font-size:12px}.entry-info{font-size:10px}.bottom-grid{grid-template-columns:1fr}.small-card{padding:18px}.water-card{display:flex;align-items:center;justify-content:space-between;gap:12px}.water-card h3{font-size:14px}.water-num{font-size:22px;margin:3px 0 0}.food-grid{grid-template-columns:1fr}.toolbar .primary{padding:11px 14px}.settings-grid{grid-template-columns:1fr}.stats-grid{gap:8px}.stat{padding:13px 10px}.stat strong{font-size:23px}.stat span{font-size:10px}dialog{max-height:92dvh;border-radius:23px;width:calc(100% - 16px)}#dialog-body{padding:20px 18px 24px}.dialog-head{padding:16px 18px 11px}.macro-inputs{gap:6px}.macro-inputs label{font-size:11px}#toast{bottom:calc(90px + env(safe-area-inset-bottom));width:max-content;max-width:90vw}.history-row{padding:15px}.history-row strong{font-size:15px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.settings-grid button{max-width:100%}@media(min-width:700px){.ai-actions{grid-template-columns:1fr 1fr}.ai-actions button:last-child{grid-column:1 / -1}}
+
+.scanner-buttons{display:grid;grid-template-columns:1fr;gap:9px;margin:12px 0}.scanner-buttons button{min-height:48px;width:100%;justify-content:center}@media(min-width:650px){.scanner-buttons{grid-template-columns:1fr 1fr}}#barcode-result{margin:14px 0 6px;overflow-wrap:anywhere}#barcode-result .food-grid{margin-top:9px}#barcode-input{min-width:0;flex:1}.food-card .food-data{overflow-wrap:anywhere}
+.scanner-help{margin:14px 0 18px;padding:13px 16px;border-radius:13px;background:#edf0e7;color:var(--text)}.scanner-help summary{cursor:pointer;font-weight:600}.scanner-help ol{padding-left:22px}.scanner-help li{padding-top:10px}.scanner-help .micro{padding-top:12px}.scan-product{border:1px solid #d7dfcf;border-radius:17px;background:#f4f6ed;padding:15px 17px;margin-bottom:18px}.scan-product h3{font-size:21px;line-height:1.3;margin:7px 0}.scan-product p{margin:5px 0 0}.scan-confirm-label{font-size:12px;font-weight:600;color:#597062;margin-bottom:7px}.scan-nutrition{padding:12px 0 3px}.scan-nutrition strong{font-size:17px;line-height:1.5;display:block}.scan-result-total{background:#e1ebd8;padding:16px;border-radius:15px;margin:17px 0}.scan-result-total strong{font-size:21px}.scan-confirm-actions{display:flex;gap:10px}.scan-confirm-actions button{flex:1}.scan-correct{margin-top:16px;width:100%;text-align:center}.scan-confirm-actions{position:sticky;bottom:0;z-index:2;background:var(--bg);padding:9px 0 12px;border-top:1px solid var(--line)}@media(max-width:400px){.scan-confirm-actions{flex-direction:column}} .dish-lookup{background:#eef1e9;border:1px solid #d8e0d2;border-radius:16px;padding:12px 12px 14px;margin:14px 0 18px}.dish-lookup-controls{display:grid;grid-template-columns:1fr 128px;gap:9px}.dish-lookup-controls button{font-size:13px;min-height:46px;white-space:normal}.dish-list-title{font-weight:700;margin:14px 0 8px}.dish-pick{width:100%;text-align:left;background:#fff;border:1px solid #dce1d5;border-radius:11px;padding:11px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:7px 0}.dish-pick span{display:flex;flex-direction:column;gap:3px;min-width:0}.dish-pick strong{font-size:14px}.dish-pick small{font-size:12px;color:#375f4a}.dish-pick em{font-size:11px;color:#718177;font-style:normal}.dish-pick b{font-size:21px;font-weight:400}.dish-selected{padding:12px;margin-top:11px;border-radius:10px;background:#dcebd2;font-size:13px;color:#275e42}@media(max-width:410px){.dish-lookup-controls{grid-template-columns:1fr}.dish-lookup-controls button{width:100%}} 
+/* Вкладка статистики v2.0 */
+.stats-controls{display:flex;gap:7px;margin:0 0 17px;background:#e8ece4;padding:6px;border-radius:14px;width:max-content;max-width:100%}.stats-controls button{border:0;background:transparent;color:#586e60;padding:9px 15px;border-radius:9px;font-weight:600}.stats-controls button.selected{color:#205238;background:white;box-shadow:0 1px 4px #162d1b16}
+.stat-section{margin-bottom:20px;padding:22px}.section-title{display:flex;align-items:start;justify-content:space-between;gap:10px;margin-bottom:15px}.section-title h2{margin:0;font-size:23px}.section-title .primary{min-height:42px;white-space:nowrap;padding:10px 15px}.stat-section h2{margin:0 0 4px}.stat-section h3{font-size:16px;margin:16px 0 8px}
+.weight-stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:10px}.stat-card{border-radius:13px;background:#f0f3eb;padding:14px 13px;min-width:0;display:flex;flex-direction:column;gap:5px}.stat-card>span{color:#65776a;font-size:12px}.stat-card strong{font-size:24px;line-height:1.15;color:#244836;white-space:nowrap}.stat-card strong small{font-size:12px;font-weight:500}.stat-card>small{font-size:11px;color:#697a70;line-height:1.4}
+.weight-chart{display:block;width:100%;height:auto;max-height:300px}.no-stats{padding:40px 10px;text-align:center;border-radius:15px;background:#f2f4ed;color:#718075;font-size:14px}.stats-actions{display:flex;justify-content:end;margin:10px 0 4px}.stats-actions button{font-size:13px}.weight-log{margin-top:17px;padding-top:12px;border-top:1px solid var(--line)}.weight-log h3{margin:5px 0 9px}.weight-row{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;padding:11px 3px;text-align:left;color:var(--ink);gap:12px}.weight-row span:first-child{display:flex;flex-direction:column;font-size:13px}.weight-row small{font-size:11px;color:#768478}.weight-row strong{font-size:15px;white-space:nowrap}.weight-row strong span{font-size:24px;vertical-align:middle;color:#91a393}
+.nutrition-bars{margin-top:17px}.bar-chart-body{position:relative;display:flex;align-items:stretch;height:160px;gap:3px;border-bottom:1px solid #bbcabe;background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),#dee7dc calc(25% - 1px),#dee7dc 25%);padding:0 2px}.nutrition-day{height:100%;flex:1;display:flex;flex-direction:column;justify-content:end;min-width:0}.nutrition-bar{width:100%;border-radius:4px 4px 0 0;background:#4d9870;position:relative;z-index:1}.nutrition-bar.not-complete{background:repeating-linear-gradient(135deg,#b0ceb9,#b0ceb9 5px,#d2e3d4 5px,#d2e3d4 9px)}.goal-rule{position:absolute;left:0;right:0;height:2px;background:#bd985b;pointer-events:none;z-index:2}.goal-rule span{font-size:10px;background:#fffef9;color:#846335;position:absolute;right:0;bottom:3px;padding:0 2px}.bar-chart-dates{display:flex;justify-content:space-between;color:#7e8c82;font-size:11px;padding-top:6px}.stat-note{margin:12px 0 0}
+.macro-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.macro-tile{display:flex;flex-direction:column;gap:4px;text-align:left;border:1px solid #dce6dc;padding:12px;background:#f2f4ee;border-radius:13px;color:var(--ink);min-width:0}.macro-tile.selected{border-color:#35684c;background:#e2eddf;box-shadow:inset 0 0 0 1px #35684c}.macro-tile span{font-size:13px}.macro-tile strong{font-size:22px;white-space:nowrap}.macro-tile strong small{font-size:11px}.macro-tile>small{font-size:11px;color:#6d7b70}.stat-subhead{margin-top:21px!important}.analysis-list{display:grid;gap:9px;margin:14px 0}.analysis-list p{background:#f1f4ed;padding:13px 14px;border-radius:12px;margin:0;font-size:13px;line-height:1.55}
+.weight-quick{display:flex;align-items:center;justify-content:space-between;gap:15px}.weight-quick-actions{display:flex;flex-direction:column;gap:12px;align-items:flex-end}.weight-quick-actions a{font-size:12px;color:#35684c;text-decoration:none}.weight-quick .water-num{white-space:nowrap}
+@media(max-width:520px){.stats-controls{width:100%;}.stats-controls button{flex:1;padding:9px 7px;font-size:13px}.stat-section{padding:15px}.section-title h2{font-size:21px}.section-title .primary{font-size:12px;padding:8px 10px}.weight-stat-row{gap:5px}.stat-card{padding:9px 7px}.stat-card strong{font-size:18px}.stat-card>span{font-size:10px}.stat-card>small{font-size:10px}.macro-tiles{gap:5px}.macro-tile{padding:9px 6px}.macro-tile span{font-size:11px}.macro-tile strong{font-size:17px}.weight-quick{flex-wrap:wrap}}
+
+.quick-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.quick-actions .secondary,.quick-actions .primary{min-height:43px}
+.mean-rule{position:absolute;left:0;right:0;height:0;border-top:2px dashed #27879b;z-index:4;pointer-events:none}
+.mean-rule span{position:absolute;right:2px;top:-26px;background:#f5faf7;color:#267486;font-size:10px;border-radius:4px;padding:2px 4px;white-space:nowrap}
+@media(max-width:720px){.quick-actions{width:100%;justify-content:stretch}.quick-actions button{flex:1;justify-content:center;font-size:13px}}
+/* Быстрый поиск непосредственно в форме добавления */
+.dish-lookup{margin:-5px 0 15px;padding:9px 10px 12px;background:#f4f6ef}
+.dish-pick{margin:4px 0;padding:10px 12px}
+.dish-lookup-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.dish-lookup-controls button{flex:1;min-width:135px;font-size:13px}
+.dish-list-title{margin:5px 0 8px;font-weight:650}
+@media (max-width:420px){.dish-lookup-controls{display:grid;grid-template-columns:1fr 1fr}.dish-lookup-controls button{min-width:0}}
+
+/* Порция 2.5: встроенное сканирование EAN-8/13 через камеру, без Команд */
+#porcia-camera-overlay{position:fixed;inset:0;background:#0e1716;z-index:100000;display:flex;flex-direction:column;overflow-y:auto;color:#fff;padding:env(safe-area-inset-top,14px) 18px max(24px,env(safe-area-inset-bottom,14px));box-sizing:border-box}
+#porcia-camera-overlay *{box-sizing:border-box}
+#porcia-camera-overlay header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:26px 0 14px}
+#porcia-camera-overlay h2{font-size:23px;color:#fff;margin:0;line-height:1.3}
+#porcia-camera-overlay button{font-size:17px;min-height:46px;cursor:pointer;border-radius:12px;padding:9px 14px}
+#porcia-camera-overlay .close-camera{background:#33413c;border:1px solid #506159;color:#fff}
+#porcia-camera-overlay .camera-viewport{position:relative;min-height:270px;max-height:55vh;border-radius:18px;background:#020303;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#porcia-camera-overlay video{display:block;object-fit:cover;width:100%;height:100%;min-height:270px;max-height:55vh;background:#090b0a}
+#porcia-camera-overlay .camera-guide{position:absolute;left:9%;right:9%;top:40%;height:21%;border:2px solid #b0eece;border-radius:10px;pointer-events:none;box-shadow:0 0 0 400px #0002}
+#porcia-camera-overlay .camera-guide:after{content:'';height:2px;background:#d5f7d2;position:absolute;left:6%;right:6%;top:50%;opacity:.85}
+#porcia-camera-overlay .camera-status{font-size:16px;line-height:1.5;color:#e0eee7;margin:16px 0 12px}
+#porcia-camera-overlay .camera-hint{font-size:14px;line-height:1.5;color:#b6c6be;margin:0 0 18px}
+#porcia-camera-overlay .camera-fallback{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#porcia-camera-overlay .camera-fallback input{min-width:155px;flex:1;background:white!important;color:#1c4035!important;font-size:18px;border:0;border-radius:10px;padding:12px}
+#porcia-camera-overlay .camera-fallback button{background:#ddecce;color:#123b2b;border:0}
+#porcia-camera-overlay .camera-error{color:#ffe5a8;font-weight:600}
+</style><title>Порция — дневник питания</title></head><body>
+<div id="storage-warning" class="warning" hidden></div>
+<div class="shell"><aside class="sidebar"><a class="brand" href="#diary" aria-label="Порция, дневник"><span class="brand-mark">п.</span><span>порция<span class="brand-sub">Твой дневник питания</span></span></a><nav id="nav" aria-label="Разделы"></nav><div class="side-note"><span class="local-dot"></span> На твоём устройстве<p>Еда, привычки и немного<br>больше ясности.</p></div></aside>
+<main><header class="top"><span class="eyebrow">ЛИЧНЫЙ ДНЕВНИК</span><span class="pill" id="connection">Локальные записи</span></header><div id="screen"><div class="loading">Порция 2.3 · загружаем записи с iPhone…</div></div></main></div>
+<dialog id="editor"><div class="dialog-head"><h2 id="dialog-title">Добавить еду</h2><button class="icon-button" id="close-dialog" aria-label="Закрыть">×</button></div><div id="dialog-body"></div></dialog><div id="toast" role="status" aria-live="polite"></div>
+<script>(function(){
+'use strict';
+window.__porciaError=null;
+window.__porciaShowError=message=>{
+ window.__porciaError=String(message);
+ const box=document.getElementById('storage-warning');
+ if(box){box.hidden=false;box.textContent='Порция 2.3: '+message+' · Закрой окно и отправь снимок ошибки.';}
+};
+window.addEventListener('error',e=>window.__porciaShowError(e.message||'Ошибка интерфейса'));
+window.addEventListener('unhandledrejection',e=>window.__porciaShowError(String(e.reason&&e.reason.message||e.reason||'Ошибка интерфейса')));
+const pending=new Map(),queue=[];let serial=0;
+window.__porciaWake=null;
+window.__porciaQueue=queue;
+window.porciaCall=(action,payload={})=>new Promise((resolve,reject)=>{
+ const id=++serial;pending.set(id,{resolve,reject});queue.push({id,action,payload});
+ if(window.__porciaWake){const wake=window.__porciaWake;window.__porciaWake=null;wake(queue.shift());}
+});
+window.__porciaReceive=msg=>{const p=pending.get(msg.id);if(!p)return;pending.delete(msg.id);if(msg.ok)p.resolve(msg.value);else p.reject(Error(msg.error||'Не удалось выполнить действие'));};
+})();
+</script><script src="pwa-bridge.js"></script><script>(function(root){
+'use strict';
+const KEYS=['kcal','protein','fat','carbs'];
+const dateKey=(date=new Date())=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
+function validDate(s){if(typeof s!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;const d=new Date(s+'T12:00:00Z');return !isNaN(d)&&d.toISOString().slice(0,10)===s;}
+const shiftDate=(s,n)=>{const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
+const num=v=>Number(String(v).trim().replace(',','.'));
+function positive(v,max=100000){return typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max;}
+function nutrients(obj){return KEYS.every(k=>positive(obj[k]));}
+function total(entries){return entries.reduce((a,e)=>{KEYS.forEach(k=>a[k]+=e[k]);return a;},{kcal:0,protein:0,fat:0,carbs:0});}
+function portion(food,grams){if(!positive(grams,10000)||grams===0||!nutrients(food))throw Error('Проверь массу и КБЖУ');return Object.fromEntries(KEYS.map(k=>[k,food[k]*grams/100]));}
+function remainder(t,g){return {kcal:g.kcal-t.kcal,protein:Math.max(0,g.protein-t.protein),fat:Math.max(0,g.fat-t.fat)};}
+function recipeValue(items,yieldGrams){if(!items.length||!positive(yieldGrams,100000)||yieldGrams===0)throw Error('Добавь ингредиенты и массу готового блюда');const t=total(items.map(x=>portion(x,x.grams)));return Object.fromEntries(KEYS.map(k=>[k,t[k]*100/yieldGrams]));}
+const uid=()=>globalThis.crypto?.randomUUID?.()||Date.now().toString(36)+Math.random().toString(36).slice(2);
+function initial(){return {schema:1,goals:{kcal:2000,protein:100,fat:70},entries:[],days:{},foods:[
+{id:'f1',name:'Куриная грудка, готовая',kcal:165,protein:31,fat:3.6,carbs:0,note:'Без кожи и добавленного масла; справочная оценка',estimated:true},
+{id:'f2',name:'Творог 5%',kcal:121,protein:17,fat:5,carbs:2,note:'Сверь со своей упаковкой',estimated:true},
+{id:'f3',name:'Овсяные хлопья, сухие',kcal:370,protein:13,fat:7,carbs:62,note:'Масса до приготовления; справочная оценка',estimated:true},
+{id:'f4',name:'Яйцо, съедобная часть',kcal:143,protein:12.6,fat:9.5,carbs:0.7,note:'Среднее яйцо около 50 г без скорлупы',estimated:true},
+{id:'f5',name:'Растительное масло',kcal:900,protein:0,fat:100,carbs:0,note:'Учитывай масло отдельно от блюда',estimated:true}
+],recipes:[],weights:[]};}
+function validate(s){
+if(s?.revision!==undefined&&(!Number.isSafeInteger(s.revision)||s.revision<0))throw Error('Неверная версия данных');
+if(!s||s.schema!==1||!s.goals||!positive(s.goals.kcal,10000)||s.goals.kcal<1||!positive(s.goals.protein,1000)||!positive(s.goals.fat,1000))throw Error('Некорректные цели в файле');
+if(s.weights!==undefined){if(!Array.isArray(s.weights)||s.weights.length>3000)throw Error('Некорректные записи веса');const d=new Set();for(const w of s.weights){if(!w||!validDate(w.date)||!positive(w.kg,500)||w.kg<20||typeof(w.note||'')!=='string'||String(w.note||'').length>500||d.has(w.date))throw Error('Некорректное измерение веса');d.add(w.date);}}
+if(s.goals.weight!==undefined&&s.goals.weight!==null&&(!positive(s.goals.weight,500)||s.goals.weight<20))throw Error('Некорректная цель веса');
+if(s.goals.carbs!==undefined&&s.goals.carbs!==null&&(!positive(s.goals.carbs,1000)))throw Error('Некорректная цель углеводов');
+if(!Array.isArray(s.entries)||s.entries.length>20000||!Array.isArray(s.foods)||s.foods.length>2000||!Array.isArray(s.recipes)||s.recipes.length>1000||!s.days||typeof s.days!=='object'||Array.isArray(s.days))throw Error('Неверный формат резервной копии');
+const str=(v,max)=>typeof v==='string'&&v.length<=max;
+for(const list of [s.entries,s.foods,s.recipes]){const ids=new Set();for(const x of list){if(!x||!str(x.id,100)||ids.has(x.id)||!str(x.name,200)||!x.name.trim()||!nutrients(x)||!str(x.note||'',3000)||typeof x.estimated!=='boolean')throw Error('Повреждённая запись');ids.add(x.id);}}
+for(const e of s.entries){if(!validDate(e.date)||!['Завтрак','Обед','Ужин','Перекус'].includes(e.meal)||(e.grams!==null&&(!positive(e.grams,10000)||e.grams===0))||(e.photo!==null&&(!str(e.photo,1800000)||!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(e.photo))))throw Error('Некорректная запись еды или фото');}
+for(const [d,v] of Object.entries(s.days)){if(!validDate(d)||!v||!positive(v.water,20000)||typeof v.complete!=='boolean')throw Error('Некорректные данные дня');}
+for(const r of s.recipes){if(!positive(r.yieldGrams)||!r.yieldGrams||!Array.isArray(r.items)||r.items.length>100||!r.items.length||r.items.some(i=>!i||!str(i.name,200)||!nutrients(i)||!positive(i.grams,10000)||!i.grams))throw Error('Некорректный рецепт');}
+return s;
+}
+function stats(s,from,to){const rows=Object.keys(s.days).filter(d=>d>=from&&d<=to&&s.days[d].complete&&s.entries.some(e=>e.date===d)).sort().map(date=>({date,...total(s.entries.filter(e=>e.date===date))}));const sums=total(rows);return {rows,count:rows.length,average:Object.fromEntries(KEYS.map(k=>[k,rows.length?sums[k]/rows.length:null]))};}
+const api={KEYS,dateKey,validDate,shiftDate,num,total,portion,remainder,recipeValue,uid,initial,validate,stats};
+if(typeof module==='object'&&module.exports)module.exports=api;else root.Nutrition=api;
+})(globalThis);
+</script><script>'use strict';
+// Check-digit validation for EAN-8, EAN-13, UPC-A and GTIN-14. No photos involved.
+// EAN-13 and EAN-8 barcode decoding from still photos. No remote scripts.
+const PorciaEAN=(()=>{
+'use strict';
+const L=['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
+const G=['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'];
+const R=['1110010','1100110','1101100','1000010','1011100','1001110','1010000','1000100','1001000','1110100'];
+const PAR=['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
+function check(s){if(!/^\d{8}$|^\d{12,14}$/.test(s))return false;let total=0;for(let i=s.length-2, k=0;i>=0;i--,k++)total+=Number(s[i])*(k%2===0?3:1);return (10-total%10)%10===Number(s[s.length-1]);}
+function decode95(bits){if(bits.length!==95||bits.slice(0,3)!=='101'||bits.slice(45,50)!=='01010'||bits.slice(92)!=='101')return null;let digits='',parity='';for(let i=0;i<6;i++){const s=bits.slice(3+i*7,10+i*7);let n=L.indexOf(s),p='L';if(n<0){n=G.indexOf(s);p='G';}if(n<0)return null;digits+=n;parity+=p;}const first=PAR.indexOf(parity);if(first<0)return null;let right='';for(let i=0;i<6;i++){const d=R.indexOf(bits.slice(50+i*7,57+i*7));if(d<0)return null;right+=d;}const code=first+digits+right;return check(code)?code:null;}
+function decode67(bits){if(bits.length!==67||bits.slice(0,3)!=='101'||bits.slice(31,36)!=='01010'||bits.slice(64)!=='101')return null;let ds='';for(let i=0;i<4;i++){const d=L.indexOf(bits.slice(3+i*7,10+i*7));if(d<0)return null;ds+=d;}for(let i=0;i<4;i++){const d=R.indexOf(bits.slice(36+i*7,43+i*7));if(d<0)return null;ds+=d;}return check(ds)?ds:null;}
+function tryRow(gray){const n=gray.length;if(n<160)return null;
+ // Adaptive contrast across entire horizontal scan line.
+ let mn=255,mx=0;for(let i=0;i<n;i+=3){if(gray[i]<mn)mn=gray[i];if(gray[i]>mx)mx=gray[i];}
+ if(mx-mn<50)return null;
+ for(let thrFactor of [0.46,0.56,0.36]){
+  const threshold=mn+(mx-mn)*thrFactor,bs=new Uint8Array(n);for(let i=0;i<n;i++)bs[i]=gray[i]<threshold?1:0;
+  const runs=[];let last=bs[0],start=0;for(let i=1;i<=n;i++){if(i===n||bs[i]!==last){runs.push({start,len:i-start,b:last});if(i<n){start=i;last=bs[i];}}}
+  for(let k=1;k<runs.length-3;k++){
+   const a=runs[k],b=runs[k+1],c=runs[k+2],before=runs[k-1];
+   if(a.b!==1||b.b!==0||c.b!==1||before.b!==0)continue;
+   const m=(a.len+b.len+c.len)/3;
+   if(m<1.25||m>30||Math.min(a.len,b.len,c.len)/m<.64||Math.max(a.len,b.len,c.len)/m>1.37)continue;
+   if(before.len<m*3)continue;
+   for(let count of [95,67]){
+    if(a.start+count*m>n+2)continue;
+    for(let adj of [1,0.985,1.015,0.965,1.035]){
+     const step=m*adj;
+     if(a.start+count*step>=n)continue;
+     for(let shift of [0,-0.2,0.2]){
+      const pos=a.start+shift*m,seq=[];let valid=true;
+      for(let j=0;j<count;j++){
+       const xx=Math.round(pos+(j+0.5)*step);if(xx<0||xx>=n){valid=false;break;}seq.push(bs[xx]?'1':'0');
+      }
+      if(!valid)continue;
+      const code=count===95?decode95(seq.join('')):decode67(seq.join(''));
+      if(code)return code;
+     }
+    }
+   }
+  }
+ }
+ return null;
+}
+async function decodePhoto(dataUri){
+ if('BarcodeDetector' in window){try{const img=document.createElement('img');img.src=dataUri;await img.decode();const d=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','itf']});for(const result of await d.detect(img)){if(/^\d{8}$|^\d{12,14}$/.test(result.rawValue)&&check(result.rawValue))return result.rawValue;}}catch{}}
+ const img=new Image();img.src=dataUri;await new Promise((resolve,reject)=>{if(img.complete&&img.naturalWidth)return resolve();img.onload=resolve;img.onerror=()=>reject(Error('Не удалось прочитать фотографию'));});
+ // Full photo, and the central crop, in four rotations. Each row sampled with 2px averaging.
+ for(const angle of [0,90,270,180,8,-8,15,-15]){
+  const rad=angle*Math.PI/180,w=img.naturalWidth,h=img.naturalHeight,limit=2000;
+  const scale=Math.min(1,limit/Math.max(w,h)),ww=Math.round(w*scale),hh=Math.round(h*scale);
+  const rotated=Math.abs(angle)===90||Math.abs(angle)===270;
+  const canvas=document.createElement('canvas');canvas.width=rotated?hh:ww;canvas.height=rotated?ww:hh;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.translate(canvas.width/2,canvas.height/2);ctx.rotate(rad);ctx.drawImage(img,-ww/2,-hh/2,ww,hh);ctx.setTransform(1,0,0,1,0,0);
+  const W=canvas.width,H=canvas.height;if(W<170)continue;const pix=ctx.getImageData(0,0,W,H).data;
+  for(let k=0;k<31;k++){
+   // scan most rows near the centre first, then cover almost the whole picture
+   const factor=k===0?0.5:k%2===1?0.5+Math.ceil(k/2)*0.015:0.5-Math.ceil(k/2)*0.015;
+   const y=Math.min(H-2,Math.max(1,Math.floor(H*factor))),gr=new Uint8Array(W);
+   for(let x=0;x<W;x++){
+    let lum=0;for(const yy of [y-1,y,y+1]){const p=(yy*W+x)*4;lum+=pix[p]*0.299+pix[p+1]*0.587+pix[p+2]*0.114;}
+    gr[x]=Math.round(lum/3);
+   }
+   const c=tryRow(gr);if(c)return c;
+  }
+ }
+ return null;
+}
+return {decodePhoto,tryRow,check,decode95,decode67};
+})();
+
+const N=Nutrition,$=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=(v,d=0)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:d}).format(v);
+const clone=x=>JSON.parse(JSON.stringify(x));
+const mealNames=['Завтрак','Обед','Ужин','Перекус'];
+const paths={diary:'M5 3h14v18H5z M9 7h6 M9 11h6 M9 15h3',foods:'M4 8h16v13H4z M3 4h18v4H3z M9 12h6',recipes:'M7 4c-4 1-5 6 0 8v8h10v-8c5-2 4-7 0-8-2-4-8-4-10 0 M7 16h10',stats:'M3 20h18 M5 17l5-6 4 3 5-9',history:'M4 16v5 M10 10v11 M16 5v16 M22 2v19',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M12 2v3 M12 19v3 M2 12h3 M19 12h3 M5 5l2 2 M17 17l2 2 M5 19l2-2 M17 7l2-2',sun:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M12 2v2 M12 20v2 M2 12h2 M20 12h2 M5 5l1 1 M18 18l1 1 M5 19l1-1 M18 6l1-1',moon:'M20 15A9 9 0 0 1 9 4a9 9 0 1 0 11 11',plate:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10',cup:'M5 5h12v9a6 6 0 0 1-12 0z M17 6h2a3 3 0 0 1 0 6h-2 M4 21h14',plus:'M12 5v14 M5 12h14'};
+const icon=name=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name]||paths.plate}"/></svg>`;
+let statsRange=7,statsMacro='protein';
+let state,db,currentDate=N.dateKey(),tab='diary',busy=false,photo=null,editMode='portion',recipeItems=[],offlineReady=false,remoteFoods=[],lastBarcode='',pendingScanFood=null;
+const navs=[['diary','Дневник'],['recipes','Рецепты'],['stats','Статистика'],['history','История'],['settings','Настройки']];
+$('#nav').innerHTML=navs.map(([id,label])=>`<a href="#${id}" data-tab="${id}">${icon(id)}<span>${label}</span></a>`).join('');
+function notify(text){$('#toast').textContent=text;$('#toast').classList.add('visible');clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('#toast').classList.remove('visible'),3000);}
+function warn(text){$('#storage-warning').textContent=text;$('#storage-warning').hidden=false;}
+async function openDB(){return true;}
+async function readState(){if(window.__porciaBoot){const result=window.__porciaBoot;window.__porciaBoot=null;if(result.recovered)notify('Восстановлена предыдущая сохранённая версия.');return result.state;}const result=await porciaCall('read');if(result.recovered)notify('Восстановлена предыдущая сохранённая версия.');return result.state;}
+async function writeState(next,expected=null){return porciaCall('write',{state:next,expected});}
+async function commit(next){if(busy)return false;try{N.validate(next);}catch(e){notify(e.message);return false;}busy=true;updateConnection();try{if(!db)throw Error('Хранилище недоступно');const revision=state.revision||0;next.revision=revision+1;await writeState(next,revision);state=next;render();return true;}catch(e){if(e.message==='CONFLICT'){state=N.validate(await readState());render();notify('Дневник изменён другим запуском. Данные обновлены; повтори сохранение.');}else{notify('Не удалось сохранить. Запись не изменена.');warn('Не удалось сохранить данные. Проверь свободное место на iPhone и настройки Safari. Не удаляй приложение без сохранённой резервной копии.');}return false;}finally{busy=false;updateConnection();}}
+function dayEntries(date=currentDate){return state.entries.filter(e=>e.date===date);}
+function dayInfo(date=currentDate){return state.days[date]||{water:0,complete:false};}
+function titleDate(date){const diff=date===N.dateKey()?'Сегодня':date===N.shiftDate(N.dateKey(),-1)?'Вчера':null;return diff||new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(date+'T12:00:00Z'));}
+function dateLong(date){return new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(date+'T12:00:00Z'));}
+function dateNav(){return `<div class="date-nav"><button class="icon-button" data-action="prev" aria-label="Предыдущий день">‹</button><input type="date" id="selected-date" value="${currentDate}" aria-label="Дата дневника"><button class="icon-button" data-action="next" aria-label="Следующий день">›</button><button class="text-button" data-action="today">Сегодня</button></div>`;}
+function render(){if(!state)return;const hash=location.hash.slice(1);tab=navs.some(x=>x[0]===hash)?hash:'diary';document.querySelectorAll('[data-tab]').forEach(a=>{a.classList.toggle('active',a.dataset.tab===tab);if(a.dataset.tab===tab)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});$('#screen').innerHTML=({diary:diaryView,foods:foodsView,recipes:recipesView,stats:statsView,history:historyView,settings:settingsView}[tab])();updateConnection();}
+function diaryView(){const entries=dayEntries(),t=N.total(entries),r=N.remainder(t,state.goals),d=dayInfo(),estimated=entries.some(e=>e.estimated),pct=Math.min(t.kcal/state.goals.kcal*100,100);const macro=(name,key,cls)=>`<div class="macro ${cls}"><div class="macro-label"><span class="dot"></span>${name}</div><strong>${fmt(t[key])} <small>/ ≥${fmt(state.goals[key])} г</small></strong><div class="bar"><i style="width:${state.goals[key]===0?100:Math.min(100,t[key]/state.goals[key]*100)}%"></i></div><div class="micro">${r[key]>0?`До минимума ${fmt(r[key])} г`:'Минимум выполнен ✓'}</div></div>`;return `<div class="title-row"><div><h1>${titleDate(currentDate)} <span style="font-weight:400;color:#97a18e">на тарелке</span></h1><p class="subtitle">${dateLong(currentDate)} · ${entries.length?'Каждая запись делает картину яснее.':'Начни с первого приёма пищи.'}</p></div>${dateNav()}</div><div class="dashboard"><section class="energy" aria-label="Калории"><span class="energy-label">${r.kcal>=0?'Осталось на день':'Сверх ориентира'}</span><div class="energy-inner"><div><div class="energy-number">${estimated?'≈ ':''}${fmt(Math.abs(r.kcal))} <small>ккал</small></div><p class="energy-caption">${entries.length?'Можно планировать следующий приём':'Пока нет записей за этот день'}</p></div><div class="ring" style="--progress:${pct}%"><div class="ring-inner"><strong>${fmt(t.kcal)}</strong><small>съедено, ккал</small></div></div></div><div class="energy-foot"><span>Ориентир ${fmt(state.goals.kcal)} ккал</span><span>${estimated?'Есть приблизительные расчёты':'Твой дневной ориентир'}</span></div></section><div class="macros">${macro('Белки','protein','protein')}${macro('Жиры','fat','fat')}<div class="macro carbs"><div><div class="macro-label"><span class="dot"></span>Углеводы</div><span class="micro">Без отдельной цели</span></div><strong>${fmt(t.carbs)} <small>г</small></strong></div></div></div><div class="section-head"><h2>Приёмы пищи</h2><div class="quick-actions"><button class="secondary" data-action="open-scanner">▥ Сканировать</button><button class="primary" data-action="add">${icon('plus')}Добавить еду</button></div></div><div class="meals">${mealNames.map((meal,i)=>{const list=entries.filter(e=>e.meal===meal),m=N.total(list);return `<section class="meal"><div class="meal-head"><div class="meal-icon">${icon(['sun','plate','moon','cup'][i])}</div><div class="grow"><h3>${meal}</h3><p>${list.length?`${list.length} ${list.length===1?'запись':'записи'}`:'Пока пусто'}</p></div>${list.length?`<span class="meal-kcal">${fmt(m.kcal)} <small>ккал</small></span>`:''}<button class="icon-button" data-action="add" data-meal="${meal}" aria-label="Добавить: ${meal}">+</button></div>${list.map(e=>`<button class="entry" data-action="edit-entry" data-id="${esc(e.id)}">${e.photo?`<img src="${e.photo}" alt="Фото блюда">`:''}<div><div class="entry-title">${esc(e.name)}</div><div class="entry-info">${e.grams?`${fmt(e.grams,1)} г · `:''}Б ${fmt(e.protein,1)} · Ж ${fmt(e.fat,1)} · У ${fmt(e.carbs,1)}${e.estimated?' · оценка':''}</div></div><div class="entry-values">${e.estimated?'≈':''}${fmt(e.kcal)}<small>ккал · изменить</small></div></button>`).join('')}</section>`;}).join('')}</div><div class="bottom-grid"><div class="small-card weight-quick"><div><h3>Вес</h3><div class="water-num">${latestWeight()?fmt(latestWeight().kg,2):'—'} <small style="font-size:13px;color:var(--muted)">кг</small></div><p class="micro">${latestWeight()?dateLong(latestWeight().date):'Добавь первое измерение'}</p></div><div class="weight-quick-actions"><button class="primary" data-action="new-weight">+ Записать</button><a href="#stats">График и анализ →</a></div></div><div class="small-card water-card"><div><h3>Вода</h3><div class="water-num">${fmt(d.water/1000,2)} <small style="font-size:13px;color:var(--muted)">л</small></div></div><div class="water-controls"><button data-action="water" data-amount="-250" aria-label="Убрать 250 мл">−</button><button data-action="water" data-amount="250">+250 мл</button><button data-action="water" data-amount="500">+500 мл</button></div></div><div class="small-card complete-card"><label class="check"><input type="checkbox" id="day-complete" ${d.complete?'checked':''} ${!entries.length?'disabled':''}>Вся еда за день записана</label><p class="micro">Только полные дни входят в средние показатели.</p><button class="text-button" data-action="report">Поделиться итогом дня ↗</button></div></div>${estimated?'<p class="note">≈ — приблизительный расчёт. Для домашних блюд важно учитывать ингредиенты, масла и размер порции.</p>':''}`;}
+function foodsView(){return `<div class="title-row"><div><h1>База продуктов</h1><p class="subtitle">Поиск по большой открытой базе упаковок и по твоим продуктам.</p></div></div><section class="small-card" style="margin-bottom:18px"><h2>Сканер штрихкода</h2><p class="note">После считывания увидишь продукт и КБЖУ, выберешь массу и приём пищи, а затем подтвердишь запись. Снимать фото не нужно. Камера считывает код непосредственно в «Порции», без приложения «Команды».</p><div class="scanner-buttons"><button class="primary" data-action="barcode-scan">▥ Включить сканер</button></div><div class="toolbar"><input id="barcode-input" inputmode="numeric" type="text" maxlength="14" placeholder="Или введи цифры под кодом" aria-label="Штрихкод товара"><button class="secondary" data-action="barcode-lookup">Найти по номеру</button></div><div id="barcode-result" aria-live="polite"></div><p class="micro">Если товар отсутствует в бесплатной базе, сохрани данные с этикетки. После этого «Порция» узнает его по штрихкоду без интернета.</p></section><section class="small-card" style="margin-bottom:20px"><h2>Поиск в Open Food Facts</h2><div class="toolbar"><input class="search" id="online-search" type="search" placeholder="Например, творог 5%, йогурт, гречка…" maxlength="100" aria-label="Поиск в базе продуктов"><button class="primary" data-action="online-search">Найти</button></div><p class="micro">Поиск бесплатный, без аккаунта и API-ключа. У Open Food Facts неполный охват российских марок и ограничение частоты запросов. Сверяй КБЖУ с этикеткой.</p><div id="online-results"></div><p class="micro">Источник: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts</a> · ODbL · данные сообщества.</p></section><div class="section-head"><h2>Мои продукты</h2><button class="secondary" data-action="new-food">+ Свой продукт</button></div><input class="search" style="width:100%;margin:8px 0 14px" id="food-search" type="search" placeholder="Поиск среди сохранённых" aria-label="Поиск сохранённых продуктов"><div class="food-grid" id="food-results">${foodCards(state.foods)}</div>`;}
+async function lookupBarcode(raw){
+ const code=String(raw||'').replace(/\s/g,'');const out=$('#barcode-result');
+ if(!/^\d{8}$|^\d{12,14}$/.test(code)||!PorciaEAN.check(code)){
+  if(out)out.innerHTML='<p class="error">Номер штрихкода неверный. Проверь цифры на упаковке.</p>';return;
+ }
+ lastBarcode=code;const field=$('#barcode-input');if(field)field.value=code;
+ if(out)out.innerHTML='<p class="note">Ищу товар '+esc(code)+'…</p>';
+ const local=state.foods.find(f=>f.barcode===code);
+ if(local){
+  if(out)out.innerHTML='<p class="note">Товар найден в твоих продуктах.</p><button class="primary" data-action="scan-preview">Посмотреть и добавить в приём пищи</button>';
+  openScanReview({...local,code,brand:'Моя база',source:'local'});return;
+ }
+ try{
+  const food=await porciaCall('lookupBarcode',{code});if($('#barcode-result')!==out)return;
+  if(!food){out.innerHTML='<p class="note">Штрихкод '+esc(code)+' не найден в бесплатной базе. Можно внести данные с этикетки.</p><button class="primary" data-action="new-food-from-barcode">+ Добавить товар по этикетке</button>';pendingScanFood=null;return;}
+  if(!food.name)throw Error('В карточке не найдено название товара.');
+  remoteFoods=[food];
+  if(out)out.innerHTML='<p class="note">Товар найден. Проверь данные перед записью.</p><button class="primary" data-action="scan-preview">Посмотреть и добавить в приём пищи</button>';
+  openScanReview({...food,source:'Open Food Facts',estimated:false});
+ }catch(e){if($('#barcode-result')===out)out.innerHTML='<p class="error">'+esc(e.message||String(e))+'</p><button class="secondary" data-action="new-food-from-barcode">Внести по этикетке вручную</button>';pendingScanFood=null;}
+}
+function openScanReview(food){
+ if(!food)return;
+ pendingScanFood={...food};
+ const code=String(food.code||food.barcode||lastBarcode||'');
+ const keyLabels={kcal:'Ккал',protein:'Белки, г',fat:'Жиры, г',carbs:'Углеводы, г'};
+ const missing=N.KEYS.filter(k=>!Number.isFinite(food[k])||food[k]<0);
+ const nutrientInputs=`<div class="macro-inputs">${N.KEYS.map(k=>`<label class="field"><span>${keyLabels[k]}</span><input type="text" inputmode="decimal" name="${k}" value="${Number.isFinite(food[k])&&food[k]>=0?esc(String(food[k])):''}" placeholder="${missing.includes(k)?'Нет данных':'0'}" required maxlength="10"></label>`).join('')}</div>`;
+ showDialog('Проверь продукт',`<form id="scan-confirm-form">
+ <div class="scan-product"><div class="scan-confirm-label">Продукт по штрихкоду</div>
+ <label class="field"><span>Название</span><input name="name" type="text" required maxlength="200" value="${esc(food.name||('Товар '+code))}"></label>
+ <p class="micro">${esc(food.brand||'')}${code?' · Штрихкод '+esc(code):''}</p></div>
+ ${missing.length?`<p class="note" style="color:#9b4a22">В каталоге не заполнены: ${missing.map(k=>keyLabels[k]).join(', ')}. Известные значения подставлены. Впиши недостающие цифры с этикетки.</p>`:'<p class="note">КБЖУ из каталога. Проверь цифры на упаковке; все поля можно исправить.</p>'}
+ <div class="scan-nutrition"><div class="scan-confirm-label">Данные на 100 г (для напитков — на 100 мл)</div>${nutrientInputs}</div>
+ <label class="field"><span>Съедено, г (для напитков — мл)</span><input name="grams" inputmode="decimal" type="text" value="100" required placeholder="Например, 150"></label>
+ <div class="scan-nutrition scan-result-total"><div class="scan-confirm-label">Итого за порцию</div><strong id="scan-portion-total"></strong></div>
+ <div class="form-grid"><label class="field"><span>Добавить в приём пищи</span><select name="meal">${mealNames.map(m=>`<option value="${m}" ${m==='Перекус'?'selected':''}>${m}</option>`).join('')}</select></label>
+ <label class="field"><span>Дата</span><input type="date" name="date" value="${currentDate}" required></label></div>
+ <label class="check"><input type="checkbox" name="remember" checked>Запомнить продукт и исправленные КБЖУ для следующего сканирования</label>
+ <p class="micro">Запись появится только после подтверждения.</p><p class="error" role="alert"></p>
+ <div class="form-actions scan-confirm-actions"><button class="secondary" type="button" data-action="cancel-scan">Отмена</button><button class="primary" type="submit">✓ Добавить в приём пищи</button></div>
+ </form>`);
+ updateScanPortion();
+}
+function scanFormNutrients(form){
+ const result={},missing=[];
+ for(const k of N.KEYS){
+   const raw=String(form.elements[k]?.value??'').trim();
+   if(!raw){missing.push(k);continue;}
+   const val=N.num(raw);
+   if(!Number.isFinite(val)||val<0||val>100000)throw Error('Некорректные значения КБЖУ');
+   result[k]=val;
+ }
+ return {result,missing};
+}
+function updateScanPortion(){
+ const f=$('#scan-confirm-form'),label=$('#scan-portion-total');if(!f||!label)return;
+ const g=N.num(f.elements.grams.value);
+ if(!Number.isFinite(g)||g<=0||g>10000){label.textContent='Укажи массу от 0 до 10 000 г';return;}
+ try{
+  const {result,missing}=scanFormNutrients(f);
+  if(missing.length){label.textContent='Заполни КБЖУ, чтобы увидеть расчёт: '+missing.length+' незаполненных поля';return;}
+  const p=N.portion(result,g);
+  label.textContent=`${fmt(p.kcal,1)} ккал · Б ${fmt(p.protein,1)} г · Ж ${fmt(p.fat,1)} г · У ${fmt(p.carbs,1)} г`;
+ }catch(e){label.textContent=e.message||'Проверь значения КБЖУ';}
+}
+// Local real-time EAN-8/EAN-13 scanner. No Shortcuts, no network, no photographs.
+function startCameraScanner(){
+ return new Promise(resolve=>{
+  const overlay=document.createElement('div');overlay.id='porcia-camera-overlay';
+  overlay.innerHTML=`<header><h2>Сканировать штрихкод</h2><button class="close-camera" type="button" id="camera-cancel">Закрыть</button></header>
+    <div class="camera-viewport"><video id="porcia-live-video" autoplay playsinline muted></video><div class="camera-guide"></div></div>
+    <p id="camera-status" class="camera-status" role="status">Запрашиваю доступ к камере…</p>
+    <p class="camera-hint">Наведи заднюю камеру на полосы штрихкода и держи телефон неподвижно. Поддерживаются EAN-13 и EAN-8. Фотографировать не нужно.</p>
+    <form id="camera-manual" class="camera-fallback"><input inputmode="numeric" pattern="[0-9]{8,14}" maxlength="14" placeholder="Или введи номер"><button type="submit">Найти</button></form>`;
+  document.body.appendChild(overlay);
+  const video=overlay.querySelector('#porcia-live-video'),status=overlay.querySelector('#camera-status');
+  const cvs=document.createElement('canvas');const ctx=cvs.getContext('2d',{willReadFrequently:true});
+  let stream=null,tick=null,closed=false,misses=0;
+  const nativeDetector=window.BarcodeDetector?new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']}):null;
+  function stop(value){
+    if(closed)return;closed=true;
+    if(tick!==null)clearTimeout(tick);
+    if(stream)for(const track of stream.getTracks())track.stop();
+    video.pause();video.srcObject=null;overlay.remove();resolve(value||null);
+  }
+  overlay.querySelector('#camera-cancel').addEventListener('click',()=>stop(null));
+  overlay.querySelector('#camera-manual').addEventListener('submit',e=>{
+    e.preventDefault();const code=e.currentTarget.querySelector('input').value.trim();
+    if(!PorciaEAN.check(code)){status.textContent='Проверь цифры: неверная длина или контрольная цифра штрихкода.';status.classList.add('camera-error');return;}
+    stop(code);
+  });
+  function grayScan(pixels,w,h,isVertical){
+    const length=isVertical?h:w;const lines=isVertical?w:h;
+    if(length<170)return null;
+    const rows=[.5,.48,.52,.45,.55,.42,.58,.37,.63,.32,.68,.25,.75,.2,.8];
+    for(const fr of rows){
+      const line=Math.min(lines-2,Math.max(1,Math.floor(lines*fr)));
+      const gr=new Uint8Array(length);
+      for(let i=0;i<length;i++){
+        const pix=isVertical?4*(i*w+line):4*(line*w+i);
+        const lum=0.299*pixels[pix]+0.587*pixels[pix+1]+0.114*pixels[pix+2];
+        gr[i]=lum;
+      }
+      const code=PorciaEAN.tryRow(gr);
+      if(code)return code;
+      // Reflect for upside-down packaging: inverse reading direction.
+      gr.reverse();const flipped=PorciaEAN.tryRow(gr);if(flipped)return flipped;
+    }
+    return null;
+  }
+  async function scanFrame(){
+    if(closed)return;
+    try{
+      if(video.readyState>=2 && video.videoWidth>=200){
+        const scale=Math.min(1,1280/video.videoWidth,1280/video.videoHeight);
+        const w=Math.max(1,Math.floor(video.videoWidth*scale)),h=Math.max(1,Math.floor(video.videoHeight*scale));
+        if(cvs.width!==w||cvs.height!==h){cvs.width=w;cvs.height=h;}
+        ctx.drawImage(video,0,0,w,h);
+        let code=null;
+        if(nativeDetector){try{const detected=await nativeDetector.detect(cvs);for(const item of detected){if(PorciaEAN.check(item.rawValue)){code=item.rawValue;break;}}}catch{}}
+        if(!code){const pixels=ctx.getImageData(0,0,w,h).data;code=grayScan(pixels,w,h,false) || (misses%3===0?grayScan(pixels,w,h,true):null);}
+        if(code){
+          // EAN-8/EAN-13 already passed parity and checksum validation inside PorciaEAN.
+          // Do not wait for a second scan: motion blur made some valid codes stall.
+          status.textContent='Код считан: '+code+'. Открываю товар…';
+          stop(code);
+          return;
+        }else{misses++;if(misses===8)status.textContent='Камера работает. Держи штрихкод крупно, горизонтально, без бликов.';}
+      }
+    }catch(e){status.textContent='Не удалось обработать изображение камеры: '+(e.message||e);status.classList.add('camera-error');return;}
+    tick=setTimeout(scanFrame,230);
+  }
+  async function start(){
+    if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      status.textContent='Камера недоступна. Открой «Порцию» с установленного значка через Safari по HTTPS и разреши доступ к камере. Или введи цифры ниже.';
+      status.classList.add('camera-error');return;
+    }
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});
+      if(closed){stream.getTracks().forEach(t=>t.stop());return;}
+      video.srcObject=stream;await video.play();
+      if(closed)return;
+      status.textContent='Камера включена. Наведи на штрихкод.';
+      tick=setTimeout(scanFrame,350);
+    }catch(e){
+      if(closed)return;
+      const reason=String(e?.name||'')+' '+String(e?.message||e);
+      status.textContent='Камера не открылась: '+reason+'. Проверь разрешение камеры в Safari: настройки сайта → Камера → Разрешить. Сейчас доступен ручной ввод номера.';
+      status.classList.add('camera-error');
+    }
+  }
+  start();
+ });
+}
+async function quickScan(button){
+ if(button)button.disabled=true;
+ try{
+  const code=await startCameraScanner();
+  if(!code)return;
+  await quickLookup(code);
+ }catch(ex){
+  showDialog('Сканер не сработал',`<p class="error">${esc(ex.message||String(ex))}</p><p>Можешь ввести цифры под штрихкодом.</p><form id="barcode-manual-form"><label class="field"><span>Штрихкод товара</span><input name="code" inputmode="numeric" maxlength="14" required></label><button class="primary" type="submit">Найти</button></form>`);
+ }finally{if(button)button.disabled=false;}
+}
+async function quickLookup(raw){
+ const code=String(raw||'').trim().replace(/\s/g,'');
+ if(!/^\d{8}$|^\d{12,14}$/.test(code)||!PorciaEAN.check(code))throw Error('Штрихкод содержит неверную контрольную цифру');
+ lastBarcode=code;
+ // Always leave the camera for a dedicated confirmation/loading screen immediately.
+ showDialog('Штрихкод считан',`<div class="scan-product" role="status" aria-live="polite">
+   <div class="scan-confirm-label">Код успешно считан</div>
+   <h3>✓ ${esc(code)}</h3>
+   <p class="note">Ищу продукт и его КБЖУ…</p>
+   <p class="micro">Поиск может занять несколько секунд. Если товар не найден, предложу ввести сведения с упаковки.</p>
+ </div>`);
+ const saved=state.foods.find(f=>f.barcode===code);
+ if(saved){openScanReview({...saved,code,source:'local',brand:'Мои продукты'});return;}
+ try{
+  const food=await porciaCall('lookupBarcode',{code});
+  if(!food){showDialog('Товар не найден',`<p class="note">Штрихкод ${esc(code)} отсутствует в Open Food Facts. Добавь КБЖУ с упаковки вручную.</p><button type="button" class="primary" data-action="new-food-from-barcode">+ Внести по этикетке</button>`);return;}
+  openScanReview({...food,source:'Open Food Facts',estimated:false});
+ }catch(ex){showDialog('Нет данных о товаре',`<p class="error">${esc(String(ex.message||ex))}</p><button type="button" class="primary" data-action="new-food-from-barcode">Ввести данные с этикетки</button>`);}
+}
+async function scanBarcode(button){
+ if(button)button.disabled=true;
+ try{const code=await startCameraScanner();if(code)await quickLookup(code);}
+ catch(e){showDialog('Не удалось открыть товар',`<p class="error">${esc(String(e?.message||e))}</p><button class="primary" type="button" data-action="new-food-from-barcode">Внести по этикетке</button>`);}
+ finally{if(button)button.disabled=false;}
+}
+function onlineCards(list){return list.length?`<div class="food-grid">${list.map((f,i)=>`<article class="food-card"><h3>${esc(f.name)}</h3><div class="food-data">${fmt(f.kcal)} ккал · Б ${fmt(f.protein,1)} · Ж ${fmt(f.fat,1)} · У ${fmt(f.carbs,1)}</div><p class="micro">На 100 г · ${esc(f.brand||'Упаковка')} ${f.code?'· '+esc(f.code):''}</p><div class="food-actions"><button class="primary" data-action="online-use" data-index="${i}">В дневник +</button><button class="secondary" data-action="online-save" data-index="${i}">Сохранить</button></div></article>`).join('')}</div>`:'<p class="note">По этому запросу продуктов с полными КБЖУ не найдено. Попробуй другое название.</p>';}
+
+function foodCards(list){return list.length?list.map(f=>`<article class="food-card"><h3>${esc(f.name)}</h3><div class="food-data">${fmt(f.kcal)} ккал · Б ${fmt(f.protein,1)} · Ж ${fmt(f.fat,1)} · У ${fmt(f.carbs,1)}</div><p class="micro">${esc(f.note)}</p><span class="badge">${f.estimated?'Приблизительно':'По указанным данным'}</span><div class="food-actions"><button class="secondary" data-action="use-food" data-id="${esc(f.id)}">В дневник +</button><button class="text-button" data-action="edit-food" data-id="${esc(f.id)}">Изменить</button></div></article>`).join(''):'<div class="empty"><h3>Ничего не найдено</h3><p>Добавь свой продукт по этикетке.</p></div>';}
+function recipesView(){return `<div class="title-row"><div><h1>Мои рецепты</h1><p class="subtitle">Посчитай целое блюдо, затем добавляй порциями.</p></div><button class="primary" data-action="new-recipe">+ Создать рецепт</button></div>${state.recipes.length?`<div class="food-grid">${state.recipes.map(r=>`<article class="food-card"><h3>${esc(r.name)}</h3><div class="food-data">${fmt(r.kcal)} ккал на 100 г · Б ${fmt(r.protein,1)} · Ж ${fmt(r.fat,1)}</div><p class="micro">Выход: ${fmt(r.yieldGrams)} г · ${r.items.length} ингредиентов</p><div class="food-actions"><button class="secondary" data-action="use-recipe" data-id="${esc(r.id)}">В дневник +</button><button class="text-button" data-action="edit-recipe" data-id="${esc(r.id)}">Изменить</button></div></article>`).join('')}</div>`:`<div class="small-card empty">${icon('recipes')}<h3>Домашнее — тоже посчитаем</h3><p>Добавь ингредиенты и массу готового блюда.<br>Приложение рассчитает КБЖУ на 100 г.</p><button class="secondary" data-action="new-recipe">Первый рецепт</button></div>`}<p class="note">Если весов нет, укажи примерный выход блюда и отметь рецепт как оценочный. Масло и заправки добавляй отдельными ингредиентами.</p>`;}
+
+function weightRecords(){return (state.weights||[]).slice().sort((a,b)=>a.date.localeCompare(b.date));}
+function latestWeight(){const arr=weightRecords().filter(w=>w.date<=N.dateKey());return arr[arr.length-1]||null;}
+function statDates(n){const t=N.dateKey();return Array.from({length:n},(_,i)=>N.shiftDate(t,i-n+1));}
+function statNutrition(days){return days.map(date=>{const e=state.entries.filter(x=>x.date===date);return {date,has:e.length>0,complete:!!state.days[date]?.complete&&e.length>0,...N.total(e)};});}
+function avgNum(values){return values.length?values.reduce((a,b)=>a+b,0)/values.length:null;}
+function fmtSigned(v,d=1){return (v>0?'+':'')+fmt(v,d);}
+function statRangeLabel(){return statsRange===7?'Неделя':statsRange===30?'Месяц':'90 дней';}
+function statDateShort(date){return date.slice(8)+'.'+date.slice(5,7);}
+function statCard(value,label,extra=''){return `<div class="stat-card"><span>${label}</span><strong>${value}</strong>${extra?`<small>${extra}</small>`:''}</div>`;}
+function weightSvg(points,goal,days){
+ if(!points.length)return `<div class="no-stats">Пока нет измерений веса за выбранный период. Нажми «Записать вес».</div>`;
+ const W=680,H=228,pad={l:50,r:16,t:28,b:39};const start=days[0],end=days[days.length-1];
+ const dates=days.length-1;const dayIndex=d=>Math.max(0,Math.min(dates,Math.round((Date.parse(d+'T12:00:00Z')-Date.parse(start+'T12:00:00Z'))/86400000)));
+ const ys=points.map(p=>p.kg).concat(Number.isFinite(goal)?[goal]:[]),lo=Math.max(0,Math.floor((Math.min(...ys)-0.75)*2)/2),hi=Math.ceil((Math.max(...ys)+0.75)*2)/2;
+ const h=Math.max(1,hi-lo),x=d=>pad.l+dayIndex(d)/Math.max(1,dates)*(W-pad.l-pad.r),y=v=>pad.t+(hi-v)/h*(H-pad.t-pad.b);
+ const grid=Array.from({length:5},(_,i)=>{const v=lo+h*i/4,Y=y(v);return `<line x1="${pad.l}" y1="${Y.toFixed(1)}" x2="${W-pad.r}" y2="${Y.toFixed(1)}" stroke="#dee7dc" stroke-width="1"/><text x="${pad.l-9}" y="${Y+4}" fill="#69796f" text-anchor="end" font-size="13">${fmt(v,1)}</text>`;}).join('');
+ const path=points.map((p,i)=>(i?'L':'M')+x(p.date).toFixed(1)+' '+y(p.kg).toFixed(1)).join(' ');
+ const gradient=points.length>1?`${path} L${x(points[points.length-1].date).toFixed(1)} ${H-pad.b} L${x(points[0].date).toFixed(1)} ${H-pad.b} Z`:'';
+ const meanWeight=avgNum(points.map(p=>p.kg));
+ const averageLine=meanWeight===null?'':`<line x1="${pad.l}" x2="${W-pad.r}" y1="${y(meanWeight)}" y2="${y(meanWeight)}" stroke="#277f90" stroke-dasharray="4 5" stroke-width="2"/><text x="${W-pad.r-4}" y="${y(meanWeight)-7}" text-anchor="end" fill="#277f90" font-size="13">Среднее ${fmt(meanWeight,2)}</text>`;
+ const goalLine=Number.isFinite(goal)?`<line x1="${pad.l}" x2="${W-pad.r}" y1="${y(goal)}" y2="${y(goal)}" stroke="#bb8955" stroke-dasharray="6 5" stroke-width="2"/>`:'';
+ const dots=points.map(p=>`<circle cx="${x(p.date)}" cy="${y(p.kg)}" r="5.5" fill="#35684c" stroke="#fff" stroke-width="2"><title>${statDateShort(p.date)}: ${fmt(p.kg,2)} кг</title></circle>`).join('');
+ const tick=[start,days[Math.floor(dates/2)],end].filter((v,i,a)=>a.indexOf(v)===i).map(d=>`<text x="${x(d)}" y="${H-10}" text-anchor="middle" font-size="13" fill="#6e7c73">${statDateShort(d)}</text>`).join('');
+ return `<svg class="weight-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="График веса по датам: ${points.map(p=>statDateShort(p.date)+' '+fmt(p.kg,2)+' кг').join('; ')}"><defs><linearGradient id="weightGradient" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#78b899" stop-opacity="0.28"/><stop offset="100%" stop-color="#78b899" stop-opacity="0"/></linearGradient></defs>${grid}${goalLine}${averageLine}${gradient?`<path d="${gradient}" fill="url(#weightGradient)"/>`:''}${points.length>1?`<path d="${path}" fill="none" stroke="#35684c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`:''}${dots}${tick}</svg>`;
+}
+function nutritionBars(rows,key,goal){
+ const full=rows.filter(r=>r.complete);const mean=avgNum(full.map(r=>r[key]));
+ const max=Math.max(goal||0,mean||0,...rows.map(r=>r[key]),1)*1.16;
+ const sample=rows.length>30?rows.filter((r,i)=>i%Math.ceil(rows.length/30)===0||i===rows.length-1):rows;
+ return `<div class="nutrition-bars" role="img" aria-label="График ${key} по дням. Пунктир — неполные дни"><div class="bar-chart-body">${sample.map((r,i)=>{const height=r.has?Math.max(3,r[key]/max*100):0;return `<div class="nutrition-day"><div class="nutrition-bar ${r.complete?'':'not-complete'}" style="height:${height.toFixed(2)}%" title="${statDateShort(r.date)} · ${r.has?fmt(r[key],1):'нет записи'}${r.complete?' · полный день':' · неполный день'}"></div></div>`;}).join('')}${goal?`<div class="goal-rule" style="bottom:${(goal/max*100).toFixed(2)}%"><span>Цель ${fmt(goal,1)}</span></div>`:''}${mean!==null?`<div class="mean-rule" style="bottom:${(mean/max*100).toFixed(2)}%"><span>Среднее ${fmt(mean,1)}</span></div>`:''}</div><div class="bar-chart-dates"><span>${statDateShort(sample[0].date)}</span><span>${statDateShort(sample[Math.floor((sample.length-1)/2)].date)}</span><span>${statDateShort(sample[sample.length-1].date)}</span></div></div>`;
+}
+function statsView(){
+ const days=statDates(statsRange),from=days[0],to=days[days.length-1];
+ const weights=weightRecords(),visible=weights.filter(w=>w.date>=from&&w.date<=to),current=weights.filter(w=>w.date<=to).slice(-1)[0]||null;
+ const first=visible[0],last=visible[visible.length-1],weightChange=visible.length>1?last.kg-first.kg:null;
+ const weightMean=avgNum(visible.map(w=>w.kg));
+ const validTrend=visible.length>=3 && ((Date.parse(last.date)-Date.parse(first.date))/86400000)>=7;
+ let weeklyTrend=null;
+ if(validTrend){const t0=Date.parse(first.date),xy=visible.map(w=>({x:(Date.parse(w.date)-t0)/86400000,y:w.kg}));const xm=avgNum(xy.map(v=>v.x)),ym=avgNum(xy.map(v=>v.y));const den=xy.reduce((a,v)=>a+(v.x-xm)**2,0);if(den>0)weeklyTrend=7*xy.reduce((a,v)=>a+(v.x-xm)*(v.y-ym),0)/den;}
+
+ const goal=Number.isFinite(state.goals.weight)?state.goals.weight:null;
+ const rows=statNutrition(days),complete=rows.filter(x=>x.complete),mean=k=>avgNum(complete.map(r=>r[k]));
+ const macroMeta={protein:['Белки','г','#c06a9e'],fat:['Жиры','г','#b9903d'],carbs:['Углеводы','г','#6597b7']};
+ const key=statsMacro,[macroName,unit]=macroMeta[key];
+ const macrosGoal=state.goals[key]||null;
+ const proteinRate=complete.length&&state.goals.protein>0?complete.filter(r=>r.protein>=state.goals.protein).length:0;
+ const surplus=mean('kcal')===null?null:mean('kcal')-state.goals.kcal;
+ const changeText=weightChange===null?'Добавь минимум два измерения в периоде':(weightChange===0?'Вес без изменения':weightChange<0?'Снижение':'Увеличение')+' на '+fmt(Math.abs(weightChange),2)+' кг за '+Math.max(1,Math.round((Date.parse(last.date)-Date.parse(first.date))/86400000))+' дн';
+ const analysis=[];
+ if(weightChange!==null)analysis.push(changeText+'. Разовые колебания могут зависеть от воды и времени взвешивания.');
+ if(weeklyTrend!==null)analysis.push('Линейная тенденция веса: '+fmtSigned(weeklyTrend,2)+' кг/неделю по '+visible.length+' измерениям. Это описание короткого периода, не прогноз.');
+ else analysis.push('Для оценки тенденции нужно минимум 3 измерения за 7 или более дней.');
+ if(visible.length===1)analysis.push('Для оценки динамики веса нужно минимум два измерения в выбранном периоде.');
+ if(!visible.length)analysis.push('Измерений веса в периоде пока нет. Данные питания можно анализировать отдельно.');
+ if(complete.length===0)analysis.push('Средние КБЖУ пока не рассчитаны: отметь хотя бы один день как полностью записанный.');
+ else{analysis.push(`Средняя калорийность за ${complete.length} ${complete.length===1?'полный день':'полных дней'}: ${fmt(mean('kcal'))} ккал, ${Math.abs(surplus)<1?'на уровне цели':(surplus>0?'выше':'ниже')+' ориентира на '+fmt(Math.abs(surplus))+' ккал'}.`);
+ analysis.push(`Белок: в среднем ${fmt(mean('protein'),1)} г, цель ${fmt(state.goals.protein)} г выполнена в ${proteinRate} из ${complete.length} полных дней.`);
+ if(complete.length<3)analysis.push('Для выводов о привычном питании требуется больше полностью записанных дней.');}
+ if(goal!==null&&current)analysis.push(`До целевого веса ${fmt(goal,2)} кг: ${fmt(Math.abs(current.kg-goal),2)} кг ${current.kg<=goal?'(цель достигнута или пройдена)':''}.`);
+ return `<div class="title-row"><div><h1>Статистика</h1><p class="subtitle">Вес и питание · данные хранятся на iPhone</p></div></div>
+ <div class="stats-controls" role="group" aria-label="Период статистики">${[7,30,90].map(n=>`<button type="button" class="${statsRange===n?'selected':''}" data-action="stats-range" data-value="${n}">${n===7?'Неделя':n===30?'Месяц':'90 дней'}</button>`).join('')}</div>
+ <section class="small-card stat-section"><div class="section-title"><div><h2>Мой вес</h2><p class="micro">${statDateShort(from)} — ${statDateShort(to)}</p></div><button class="primary" data-action="new-weight">+ Записать вес</button></div>
+ <div class="weight-stat-row">${statCard(current?fmt(current.kg,2)+' <small>кг</small>':'—','Последний замер',current?dateLong(current.date):'Нет данных')}${statCard(weightChange===null?'—':fmtSigned(weightChange,2)+' <small>кг</small>','Изменение за период',visible.length+' измерений')}${statCard(goal!==null?fmt(goal,2)+' <small>кг</small>':'—','Целевой вес',goal!==null&&current?fmt(Math.abs(current.kg-goal),2)+' кг до цели':'Устанавливается вручную')}</div>
+ ${weightSvg(visible,goal,days)}<p class="micro stat-note">Пунктирная бирюзовая линия — средний вес за период${weightMean===null?'':': '+fmt(weightMean,2)+' кг'}. ${weeklyTrend===null?'Недостаточно данных для тренда.':'Тенденция: '+fmtSigned(weeklyTrend,2)+' кг/неделю (линейная оценка).'}</p><div class="stats-actions"><button class="secondary" type="button" data-action="weight-goal">${goal!==null?'Изменить целевой вес':'Указать целевой вес'}</button></div>
+ <div class="weight-log"><h3>Измерения за период</h3>${visible.length?visible.slice().reverse().map(w=>`<button type="button" class="weight-row" data-action="edit-weight" data-date="${w.date}"><span>${dateLong(w.date)}${w.note?`<small>${esc(w.note)}</small>`:''}</span><strong>${fmt(w.kg,2)} кг <span aria-hidden="true">›</span></strong></button>`).join(''):'<p class="micro">Измерений нет. Можешь добавить вес за любую дату.</p>'}</div></section>
+ <section class="small-card stat-section"><div class="section-title"><div><h2>Калории</h2><p class="micro">Цель: ${fmt(state.goals.kcal)} ккал/день</p></div></div><div class="stats-grid">${statCard(mean('kcal')===null?'—':fmt(mean('kcal'))+' <small>ккал</small>','Среднее за полный день',complete.length+' из '+statsRange+' дней')}${statCard(surplus===null?'—':fmtSigned(surplus)+' <small>ккал</small>','Отклонение от цели','По завершённым дням')}</div>${nutritionBars(rows,'kcal',state.goals.kcal)}<p class="micro stat-note">Пунктир — среднее по завершённым дням, сплошная линия — цель. Светлые столбцы — неполные дни. Пропуски не считаются нулём. Среднее рассчитано только по дням с отметкой «Вся еда за день записана».</p></section>
+ <section class="small-card stat-section"><div class="section-title"><div><h2>Белки, жиры, углеводы</h2><p class="micro">КБЖУ за выбранный период</p></div></div><div class="macro-tiles">${['protein','fat','carbs'].map(k=>`<button class="macro-tile ${key===k?'selected':''}" data-action="stats-macro" data-value="${k}"><span>${macroMeta[k][0]}</span><strong>${mean(k)===null?'—':fmt(mean(k),1)} <small>г</small></strong>${state.goals[k]!=null?`<small>Цель ${fmt(state.goals[k])} г</small>`:'<small>Без цели</small>'}</button>`).join('')}</div><h3 class="stat-subhead">${macroName} по дням</h3>${nutritionBars(rows,key,macrosGoal)}<p class="micro stat-note">Пунктир — среднее по полным дням, сплошная линия — цель (когда задана). Неполные дни не учитываются в среднем.</p></section>
+ <section class="small-card stat-section"><h2>Анализ</h2><div class="analysis-list">${analysis.map(msg=>`<p>${esc(msg)}</p>`).join('')}</div><p class="micro">Статистика описывает записи в дневнике и не является оценкой энергозатрат или прогнозом похудения. Состав блюд может быть приблизительным.</p></section>`;
+}
+function openWeight(date=null){
+ const old=date?weightRecords().find(w=>w.date===date):null,defaultDay=old?.date||N.dateKey();
+ showDialog(old?'Изменить вес':'Записать вес',`<form id="weight-form" data-original="${old?.date||''}"><label class="field"><span>Дата измерения</span><input type="date" name="date" value="${defaultDay}" required></label><label class="field"><span>Вес, кг</span><input type="text" inputmode="decimal" name="kg" placeholder="Например, 75,5" value="${old?fmt(old.kg,2):''}" required></label><label class="field"><span>Заметка (необязательно)</span><textarea name="note" maxlength="500" placeholder="Утром после пробуждения">${esc(old?.note||'')}</textarea></label><p class="micro">Для сопоставимости лучше взвешиваться в похожих условиях, например утром.</p><p class="error" role="alert"></p><div class="form-actions">${old?`<button type="button" class="danger" data-action="delete-weight" data-date="${old.date}">Удалить</button>`:''}<button type="submit" class="primary">Сохранить вес</button></div></form>`);
+}
+function openWeightGoal(){const v=state.goals.weight;showDialog('Целевой вес',`<form id="weight-goal-form"><label class="field"><span>Моя цель, кг</span><input type="text" name="weight" inputmode="decimal" placeholder="Например, 75,3" value="${Number.isFinite(v)?fmt(v,2):''}"></label><p class="micro">Если оставить поле пустым, цель не будет отображаться.</p><p class="error" role="alert"></p><div class="form-actions"><button type="submit" class="primary">Сохранить цель</button></div></form>`);}
+
+function historyView(){const today=N.dateKey(),from=N.shiftDate(today,-6),st=N.stats(state,from,today),dates=[...new Set([...state.entries.map(e=>e.date),...Object.keys(state.days)])].sort().reverse(),week=Array.from({length:7},(_,i)=>N.shiftDate(from,i)),max=Math.max(state.goals.kcal,...week.map(d=>N.total(dayEntries(d)).kcal));return `<div class="title-row"><div><h1>Твоя история</h1><p class="subtitle">Последние 7 дней · ${st.count} полностью заполненных</p></div></div><div class="stats-grid">${[['kcal','Ккал в среднем'],['protein','Белки, г в среднем'],['fat','Жиры, г в среднем']].map(([k,l])=>`<div class="stat"><strong>${st.count?fmt(st.average[k]):'—'}</strong><span>${l}</span></div>`).join('')}</div><div class="small-card"><h3>Записанные калории</h3><div class="week-chart">${week.map(d=>{const e=dayEntries(d),t=N.total(e),full=dayInfo(d).complete;return `<div class="chart-col"><span>${e.length?fmt(t.kcal):'—'}</span><div class="chart-bar ${full?'':'partial'}" style="height:${e.length?Math.max(2,t.kcal/max*95):2}px" title="${dateLong(d)}: ${e.length?t.kcal+' ккал':'нет записей'}"></div><span>${d.slice(8)}.${d.slice(5,7)}</span></div>`;}).join('')}</div><p class="micro">Штриховка — неполный день. Пропуски не считаются нулевым питанием.</p></div><div class="section-head"><h2>Все записи</h2></div><div class="history-list">${dates.map(d=>{const e=dayEntries(d),t=N.total(e);return `<button class="history-row" data-action="open-day" data-date="${d}"><div><strong>${dateLong(d)}</strong><span>${dayInfo(d).complete?'Вся еда записана':'Неполный день'}${e.some(x=>x.estimated)?' · есть оценки':''}</span></div><div class="right"><strong>${e.length?fmt(t.kcal)+' ккал':'Только вода'}</strong><span>Б ${fmt(t.protein)} · Ж ${fmt(t.fat)} · У ${fmt(t.carbs)}</span></div></button>`;}).join('')||'<div class="empty">История появится после первой записи.</div>'}</div>`;}
+function settingsView(){return `<div class="title-row"><div><h1>Настройки</h1><p class="subtitle">Цели, сканер и сохранность дневника.</p></div></div><div class="settings-grid"><section class="small-card"><h2>Дневные ориентиры</h2><form id="goal-form"><label class="field"><span>Калории, ккал</span><input name="kcal" type="number" min="1" max="10000" step="1" value="${state.goals.kcal}" required></label><div class="form-grid"><label class="field"><span>Белок, минимум г</span><input name="protein" type="number" min="0" max="1000" step="1" value="${state.goals.protein}" required></label><label class="field"><span>Жиры, минимум г</span><input name="fat" type="number" min="0" max="1000" step="1" value="${state.goals.fat}" required></label></div><div class="form-grid"><label class="field"><span>Углеводы, г (необязательно)</span><input name="carbs" inputmode="decimal" type="text" placeholder="Без цели" value="${state.goals.carbs??''}"></label><label class="field"><span>Целевой вес, кг (необязательно)</span><input name="weight" inputmode="decimal" type="text" placeholder="Например, 75,3" value="${state.goals.weight??''}"></label></div><p class="micro" style="margin-bottom:15px">Ориентиры применяются ко всем дням. Средние значения за неполные дни не учитываются.</p><button class="primary" type="submit">Сохранить цели</button></form></section><section class="small-card"><h2>Сканирование продуктов</h2><p class="note">Кнопка «Сканировать» запускает камеру прямо в «Порции». Снимать фото и настраивать «Команды» не требуется. Разреши доступ к камере для сайта в Safari при первом запуске. На некоторых моделях распознавание может зависеть от освещения и фокуса. После распознавания корректного кода камера закрывается сразу. Затем откроется карточка товара с КБЖУ и подтверждением порции.</p><button class="secondary" type="button" data-action="open-scanner">▥ Сканировать сейчас</button></section><section class="small-card"><h2>Мои продукты</h2><p class="note">Раздел из нижнего меню удалён, но твои сохранённые продукты доступны для рецептов и ручного ввода.</p><button class="secondary" type="button" data-action="new-food">+ Добавить продукт вручную</button><div style="max-height:350px;overflow:auto;margin-top:12px">${foodCards(state.foods)}</div></section><section class="small-card"><h2>Твои данные</h2><p class="note">Дневник, измерения веса, рецепты и фото еды хранятся локально на iPhone в данных этого сайта. Названия продуктов и штрихкоды передаются в Open Food Facts при поиске. Фотографии блюд не отправляются в сеть.</p><div class="stack"><button class="secondary" data-action="export">Скачать резервную копию</button><button class="secondary" data-action="native-import">Восстановить из копии</button></div><p class="note">Если удалить данные сайта Safari или очистить хранилище приложения, записи могут быть потеряны. Регулярно сохраняй резервную копию.</p></section><section class="small-card"><h2>Порция на экране Домой</h2><p class="note">Открой размещённый по HTTPS адрес этого приложения в Safari, затем выбери «Поделиться» → «На экран Домой» → «Добавить». Scriptable и «Команды» не требуются.</p><ol class="install-steps"><li>Открой HTTPS-адрес приложения в Safari на iPhone.</li><li>Нажми значок «Поделиться» и выбери «На экран Домой».</li><li>Нажми «Добавить» и запускай «Порцию» через значок.</li></ol><p class="micro">Порция · PWA 1.0 · часовой пояс Москва</p></section></div>`;}
+function showDialog(title,body){$('#dialog-title').textContent=title;$('#dialog-body').innerHTML=body;if(!$('#editor').open)$('#editor').showModal();}
+function closeDialog(){if(!busy)$('#editor').close();}
+$('#close-dialog').onclick=closeDialog;
+$('#editor').addEventListener('click',e=>{if(e.target===$('#editor'))closeDialog();});
+function inputs(v={}){return `<div class="macro-inputs">${[['kcal','Ккал'],['protein','Белки, г'],['fat','Жиры, г'],['carbs','Углев., г']].map(([key,label])=>`<label class="field"><span>${label}</span><input name="${key}" inputmode="decimal" type="text" value="${v[key]??''}" maxlength="10" required></label>`).join('')}</div>`;}
+function parseValues(form){const fd=new FormData(form),v={};for(const key of N.KEYS){const raw=fd.get(key);if(!String(raw??'').trim())throw Error('Заполни все значения КБЖУ, включая нули');v[key]=N.num(raw);if(!Number.isFinite(v[key])||v[key]<0||v[key]>100000)throw Error('КБЖУ должны быть числами от 0 до 100 000');}return v;}
+function err(form,message){form.querySelector('.error').textContent=message;}
+function options(list,blank){return `<option value="">${blank}</option>`+list.map(f=>`<option value="${esc(f.id)}">${esc(f.name)}</option>`).join('');}
+
+const DISH_REFERENCE=[{"name":"Морковь сырая","aliases":["морковь","морковка","морковь свежая","сырая морковь"],"kcal":41,"protein":0.9,"fat":0.2,"carbs":9.6,"estimated":true,"source":"reference"},{"name":"Морковь варёная","aliases":["морковь вареная","морковь отварная","морковка вареная"],"kcal":35,"protein":0.8,"fat":0.2,"carbs":8.2,"estimated":true,"source":"reference"},{"name":"Борщ домашний","aliases":["борщ","борщик"],"kcal":50,"protein":2.2,"fat":2.5,"carbs":5.0,"estimated":true,"source":"reference"},{"name":"Щи из капусты","aliases":["щи","щи капуста"],"kcal":42,"protein":2.0,"fat":1.8,"carbs":4.8,"estimated":true,"source":"reference"},{"name":"Суп куриный с лапшой","aliases":["куриный суп","суп с лапшой","суп лапша курица"],"kcal":55,"protein":4.0,"fat":2.0,"carbs":5.2,"estimated":true,"source":"reference"},{"name":"Солянка мясная","aliases":["солянка"],"kcal":95,"protein":5.5,"fat":6.5,"carbs":4.2,"estimated":true,"source":"reference"},{"name":"Рассольник","aliases":["рассольник"],"kcal":52,"protein":2.1,"fat":2.2,"carbs":5.5,"estimated":true,"source":"reference"},{"name":"Суп гороховый","aliases":["гороховый суп","суп из гороха"],"kcal":70,"protein":3.6,"fat":2.5,"carbs":8.2,"estimated":true,"source":"reference"},{"name":"Суп грибной","aliases":["грибной суп","суп с грибами"],"kcal":48,"protein":2.0,"fat":2.7,"carbs":4.5,"estimated":true,"source":"reference"},{"name":"Окрошка на кефире","aliases":["окрошка кефир","окрошка"],"kcal":75,"protein":3.8,"fat":4.1,"carbs":6.4,"estimated":true,"source":"reference"},{"name":"Плов с курицей","aliases":["плов с курицей","куриный плов"],"kcal":180,"protein":10,"fat":6.5,"carbs":21,"estimated":true,"source":"reference"},{"name":"Плов с говядиной","aliases":["плов с мясом","плов говядина"],"kcal":220,"protein":8.5,"fat":10,"carbs":23,"estimated":true,"source":"reference"},{"name":"Гречка сухая (крупа)","aliases":["гречка сухая","гречневая крупа","гречка"],"kcal":343,"protein":13.3,"fat":3.4,"carbs":71.5,"estimated":true,"source":"reference"},{"name":"Гречка на воде с маслом","aliases":["гречка с маслом","гречневая каша с маслом","гречка"],"kcal":145,"protein":3.5,"fat":5.3,"carbs":21.0,"estimated":true,"source":"reference"},{"name":"Гречневая каша с молоком","aliases":["гречка с молоком","гречневая каша на молоке","гречка"],"kcal":110,"protein":4.2,"fat":3.2,"carbs":16.3,"estimated":true,"source":"reference"},{"name":"Гречка варёная","aliases":["гречка","гречневая каша"],"kcal":110,"protein":3.6,"fat":1.0,"carbs":21.3,"estimated":true,"source":"reference"},{"name":"Рис отварной","aliases":["отварной рис","вареный рис","рис варёный"],"kcal":125,"protein":2.6,"fat":0.3,"carbs":27,"estimated":true,"source":"reference"},{"name":"Пюре картофельное","aliases":["пюре","картофельное пюре"],"kcal":110,"protein":2.2,"fat":4.4,"carbs":15.4,"estimated":true,"source":"reference"},{"name":"Картофель жареный","aliases":["жареная картошка","картошка жареная","жареный картофель"],"kcal":190,"protein":3,"fat":9,"carbs":23,"estimated":true,"source":"reference"},{"name":"Картофель отварной","aliases":["варёный картофель","вареная картошка"],"kcal":83,"protein":1.9,"fat":0.1,"carbs":18.5,"estimated":true,"source":"reference"},{"name":"Макароны отварные","aliases":["макароны","паста отварная"],"kcal":145,"protein":5,"fat":1,"carbs":28,"estimated":true,"source":"reference"},{"name":"Спагетти болоньезе","aliases":["болоньезе","спагетти с фаршем"],"kcal":165,"protein":8.6,"fat":6.0,"carbs":19,"estimated":true,"source":"reference"},{"name":"Кесадилья с курицей","aliases":["кесадилья с курицей","кесадилья курица","куриная кесадилья"],"kcal":230,"protein":15,"fat":11,"carbs":18,"estimated":true,"source":"reference"},{"name":"Кесадилья с сыром","aliases":["кесадилья с сыром","сырная кесадилья"],"kcal":295,"protein":13,"fat":19,"carbs":21,"estimated":true,"source":"reference"},{"name":"Буррито с курицей","aliases":["буррито с курицей","куриный буррито"],"kcal":180,"protein":10,"fat":6.2,"carbs":21,"estimated":true,"source":"reference"},{"name":"Шаурма с курицей","aliases":["шаурма","шаверма","шаурма с курицей"],"kcal":195,"protein":11,"fat":8.5,"carbs":18,"estimated":true,"source":"reference"},{"name":"Пицца маргарита","aliases":["пицца маргарита","маргарита пицца"],"kcal":250,"protein":11,"fat":10,"carbs":29,"estimated":true,"source":"reference"},{"name":"Пицца пепперони","aliases":["пицца пепперони","пепперони"],"kcal":285,"protein":12,"fat":13,"carbs":29,"estimated":true,"source":"reference"},{"name":"Салат оливье с майонезом","aliases":["оливье с майонезом","салат оливье","оливье"],"kcal":195,"protein":5,"fat":14,"carbs":11,"estimated":true,"source":"reference"},{"name":"Салат оливье без заправки","aliases":["оливье без майонеза","оливье без заправки"],"kcal":110,"protein":5.2,"fat":4,"carbs":12,"estimated":true,"source":"reference"},{"name":"Винегрет","aliases":["винегрет"],"kcal":110,"protein":1.7,"fat":6.0,"carbs":12,"estimated":true,"source":"reference"},{"name":"Салат Цезарь с курицей","aliases":["цезарь с курицей","салат цезарь"],"kcal":180,"protein":12,"fat":12,"carbs":7,"estimated":true,"source":"reference"},{"name":"Греческий салат","aliases":["греческий салат"],"kcal":110,"protein":3.2,"fat":9,"carbs":3.7,"estimated":true,"source":"reference"},{"name":"Салат из огурцов и помидоров без масла","aliases":["салат огурцы помидоры","огурцы и помидоры"],"kcal":25,"protein":1.0,"fat":0.3,"carbs":4.5,"estimated":true,"source":"reference"},{"name":"Куриная грудка запечённая","aliases":["куриная грудка","куриное филе","запеченная курица"],"kcal":165,"protein":31,"fat":3.6,"carbs":0,"estimated":true,"source":"reference"},{"name":"Котлеты куриные","aliases":["куриная котлета","котлеты из курицы"],"kcal":185,"protein":17,"fat":11,"carbs":5,"estimated":true,"source":"reference"},{"name":"Котлета домашняя мясная","aliases":["котлета","котлеты домашние"],"kcal":245,"protein":16,"fat":17,"carbs":8,"estimated":true,"source":"reference"},{"name":"Сырники","aliases":["сырники","сырник"],"kcal":235,"protein":14,"fat":10,"carbs":23,"estimated":true,"source":"reference"},{"name":"Блины без начинки","aliases":["блины","блинчики"],"kcal":225,"protein":6,"fat":9,"carbs":30,"estimated":true,"source":"reference"},{"name":"Оладьи","aliases":["оладьи"],"kcal":250,"protein":6.3,"fat":10.5,"carbs":32,"estimated":true,"source":"reference"},{"name":"Омлет с молоком","aliases":["омлет"],"kcal":150,"protein":10,"fat":11,"carbs":3,"estimated":true,"source":"reference"},{"name":"Яичница","aliases":["яичница","глазунья"],"kcal":190,"protein":13,"fat":15,"carbs":1,"estimated":true,"source":"reference"},{"name":"Каша овсяная на воде","aliases":["овсянка на воде","овсяная каша на воде"],"kcal":75,"protein":2.6,"fat":1.5,"carbs":13,"estimated":true,"source":"reference"},{"name":"Каша овсяная на молоке","aliases":["овсянка на молоке","овсяная каша с молоком"],"kcal":105,"protein":3.5,"fat":3.6,"carbs":15,"estimated":true,"source":"reference"},{"name":"Пельмени отварные","aliases":["пельмени","пельмени мясные"],"kcal":255,"protein":11,"fat":11.5,"carbs":26,"estimated":true,"source":"reference"},{"name":"Вареники с картошкой","aliases":["вареники с картофелем","вареники картошка"],"kcal":195,"protein":5,"fat":5,"carbs":34,"estimated":true,"source":"reference"},{"name":"Голубцы с мясом","aliases":["голубцы"],"kcal":120,"protein":6.5,"fat":6,"carbs":10,"estimated":true,"source":"reference"},{"name":"Макароны по-флотски","aliases":["макароны по флотски"],"kcal":190,"protein":9.5,"fat":8,"carbs":21,"estimated":true,"source":"reference"},{"name":"Тушёная капуста","aliases":["тушеная капуста","капуста тушеная"],"kcal":70,"protein":2,"fat":3.5,"carbs":8,"estimated":true,"source":"reference"},{"name":"Творожная запеканка","aliases":["запеканка творожная","творожная запеканка"],"kcal":175,"protein":13,"fat":6,"carbs":17,"estimated":true,"source":"reference"},{"name":"Рагу овощное","aliases":["овощное рагу","рагу из овощей"],"kcal":85,"protein":2,"fat":4.7,"carbs":9,"estimated":true,"source":"reference"},{"name":"Гуляш из говядины","aliases":["гуляш","гуляш говядина"],"kcal":155,"protein":15,"fat":9,"carbs":4,"estimated":true,"source":"reference"},{"name":"Тефтели с рисом","aliases":["тефтели","мясные тефтели"],"kcal":180,"protein":12,"fat":10,"carbs":10,"estimated":true,"source":"reference"},{"name":"Каша манная на молоке","aliases":["манная каша","манка на молоке"],"kcal":98,"protein":3.2,"fat":3.3,"carbs":14,"estimated":true,"source":"reference"},{"name":"Рататуй","aliases":["рататуй"],"kcal":75,"protein":1.6,"fat":5.0,"carbs":6.5,"estimated":true,"source":"reference"},{"name":"Хачапури по-аджарски","aliases":["хачапури по аджарски","хачапури"],"kcal":310,"protein":12,"fat":18,"carbs":25,"estimated":true,"source":"reference"},{"name":"Суши роллы с лососем","aliases":["роллы с лососем","суши роллы"],"kcal":165,"protein":7,"fat":4.5,"carbs":24,"estimated":true,"source":"reference"},{"name":"Салат с тунцом и овощами","aliases":["салат с тунцом","тунец с овощами"],"kcal":105,"protein":11,"fat":5.5,"carbs":3,"estimated":true,"source":"reference"}];
+let dishOnlineFoods=[],dishLastTerm='',dishSearchSerial=0,dishDebounceTimer=null,dishChosenName=null;
+function normalizeDish(s){return String(s||'').toLocaleLowerCase('ru').normalize('NFKC').replace(/ё/g,'е').replace(/[^a-zа-я0-9]+/gi,' ').trim();}
+function dishWords(s){return normalizeDish(s).split(/\s+/).filter(w=>w.length>=3&&!['для','без','или','под','как','with','мой','моя','мое','мои'].includes(w));}
+function dishSimilarity(search,title){
+ const q=normalizeDish(search),t=normalizeDish(title);if(!q||!t)return 0;
+ if(q===t)return 100;
+ if(t.includes(q))return 80+Math.min(10,q.length/3);
+ const a=dishWords(q),b=dishWords(t);
+ if(!a.length||!b.length)return 0;
+ let hit=0;for(const w of a)if(b.some(x=>x===w||(Math.min(x.length,w.length)>=5&&x.slice(0,5)===w.slice(0,5))))hit++;
+ return hit===0?0:Math.round(15+55*hit/a.length-15*Math.max(0,b.length-a.length)/Math.max(1,b.length));
+}
+function rankedDishLocal(term){
+ const refs=[...VERIFIED_RU_RECIPES,...DISH_REFERENCE].map((f,i)=>({...f,idx:i,source:'reference'}));
+ const own=[...state.foods,...state.recipes].map(f=>({...f,source:'saved'}));
+ return [...own,...refs].map(f=>({f,score:Math.max(...[f.name,...(f.aliases||[])].map(n=>dishSimilarity(term,n)))}))
+ .filter(x=>x.score>=45).sort((a,b)=>b.score-a.score||Number(a.f.source!=='saved')-Number(b.f.source!=='saved')).slice(0,12).map(x=>x.f);
+}
+function dishPickButton(f,source,i){return `<button type="button" class="dish-pick" data-action="dish-pick" data-source="${source}" data-index="${i}"><span><strong>${esc(f.name)}</strong><small>${fmt(f.kcal,1)} ккал · Б ${fmt(f.protein,1)} · Ж ${fmt(f.fat,1)} · У ${fmt(f.carbs,1)} / 100 г</small><em>${source==='reference'?(f.url?'Рецепт Food.ru · расчёт по сырым ингредиентам':'Оценка типичного домашнего рецепта'):source==='saved'?'Твои сохранённые данные':'Open Food Facts · '+esc(f.brand||'готовый продукт')}</em></span><b aria-hidden="true">＋</b></button>`;}
+const VERIFIED_RU_RECIPES=[{"name":"Омлет без молока (яйца, масло)","aliases":["омлет","омлет без молока"],"kcal":241.43,"protein":10.97,"fat":21.64,"carbs":0.71,"url":"https://food.ru/recipes/2955-omlet-bez-moloka","estimated":true,"source":"reference"},{"name":"Омлет без молока, лёгкий","aliases":["омлет","без молока"],"kcal":102,"protein":11.81,"fat":5.58,"carbs":0.7,"url":"https://food.ru/recipes/98333-omlet-bez-moloka-pyshneishii-nezhneishii-1643190910","estimated":true,"source":"reference"},{"name":"Омлет с сыром","aliases":["омлет","с сыром"],"kcal":128.33,"protein":9.96,"fat":9.37,"carbs":3.23,"url":"https://food.ru/recipes/180428-omlet-s-syrom-1691019008","estimated":true,"source":"reference"},{"name":"Омлет с молоком","aliases":["омлет","с молоком"],"kcal":189.97,"protein":10.44,"fat":15.92,"carbs":1.23,"url":"https://food.ru/recipes/2629-omlet-s-molokom","estimated":true,"source":"reference"},{"name":"Омлет с помидорами","aliases":["омлет","с помидорами"],"kcal":95.74,"protein":6.98,"fat":5.9,"carbs":2.71,"url":"https://food.ru/recipes/120960-omlet-s-pomidorami-1645896780","estimated":true,"source":"reference"},{"name":"Омлет с помидорами и сыром","aliases":["омлет","сыр помидоры"],"kcal":213.31,"protein":11.16,"fat":16.48,"carbs":4.03,"url":"https://food.ru/recipes/2933-omlet-s-pomidorami","estimated":true,"source":"reference"},{"name":"Омлет с сыром на молоке","aliases":["омлет","сыр молоко"],"kcal":218.31,"protein":10.54,"fat":18.72,"carbs":2.1,"url":"https://food.ru/recipes/195847-omlet-s-syrom-na-moloke","estimated":true,"source":"reference"},{"name":"Омлет с сыром и колбасой","aliases":["омлет","сыр колбаса"],"kcal":184.22,"protein":13.98,"fat":14.64,"carbs":5,"url":"https://food.ru/recipes/205674-omlet-s-syrom-i-kolbasoi","estimated":true,"source":"reference"},{"name":"Диетический омлет","aliases":["омлет","диетический"],"kcal":76.59,"protein":5.41,"fat":4.58,"carbs":3.53,"url":"https://food.ru/recipes/1864-dieticheskii-omlet","estimated":true,"source":"reference"}];
+let localDishHits=[];
+function showDishSuggestions(){
+ const form=$('#entry-form'),area=$('#dish-suggestions');if(!form||!area)return;
+ const term=form.elements.name.value.trim();localDishHits=term.length>=3?rankedDishLocal(term):[];
+ area.innerHTML=localDishHits.length?`<div class="micro dish-list-title">Варианты по названию · на 100 г</div>${localDishHits.map((f,i)=>dishPickButton(f,f.source,i)).join('')}`:term.length>=3?'<p class="micro">В сохранённых и справочных данных совпадений нет. Проверяю интернет… или укажи КБЖУ вручную.</p>':'';
+}
+function dishApply(f,source){
+ const form=$('#entry-form');if(!form||!f)return;
+ // Never convert the lookup result as if it were the user's old manual values.
+ editMode='hundred';dishChosenName=f.name;clearTimeout(dishDebounceTimer);dishSearchSerial++;form.elements.name.value=f.name;
+ for(const k of N.KEYS)form.elements[k].value=f[k];
+ if(!form.elements.grams.value.trim()||N.num(form.elements.grams.value)<=0)form.elements.grams.value='100';
+ form.elements.estimated.checked=source==='reference'||Boolean(f.estimated);
+ const origin=source==='reference'?(f.url?'Пример из Food.ru, расчёт на 100 г сырых ингредиентов: '+f.url:'Ориентировочное КБЖУ типичного домашнего блюда; состав неизвестен'):source==='online'?('Open Food Facts · '+(f.brand||'')+' · '+(f.code||'')):(f.note||'Моя база');
+ form.elements.note.value=origin.slice(0,3000);
+ updatePortion();
+ $('#dish-online-results').innerHTML='<div class="dish-selected">✓ Подставлены значения на 100 г. Проверь массу, КБЖУ и нажми «Добавить в дневник».</div>';
+ $('#dish-suggestions').innerHTML='';
+}
+async function dishSearch(button){
+ const form=$('#entry-form');if(!form)return;
+ const term=form.elements.name.value.trim(),dest=$('#dish-online-results');
+ if(term.length<3){dest.innerHTML='<p class="error">Введи название блюда (минимум 3 буквы).</p>';return;}
+ const serial=++dishSearchSerial;showDishSuggestions();
+ const previous=button?button.disabled:false;if(button)button.disabled=true;
+ dest.innerHTML='<p class="micro">Проверяю интернет-каталог Open Food Facts…</p>';
+ try{
+  const list=await porciaCall('searchFoods',{term});
+  if(serial!==dishSearchSerial||!$('#entry-form'))return;
+  const rank=list.map(f=>({...f,score:dishSimilarity(term,f.name)})).filter(f=>f.score>=37).sort((a,b)=>b.score-a.score||Number(b.russian)-Number(a.russian));
+  dishOnlineFoods=rank.slice(0,10);
+  dest.innerHTML=dishOnlineFoods.length?`<div class="micro dish-list-title">Интернет · данные готовых продуктов на 100 г</div>${dishOnlineFoods.map((f,i)=>dishPickButton(f,'online',i)).join('')}<p class="micro" style="margin-top:8px">Данные из Open Food Facts внесены пользователями. Для домашнего рецепта значения могут отличаться.</p>`:'<p class="micro">Совпадений среди упаковок с полными КБЖУ нет. Посмотри варианты российских рецептов выше или введи КБЖУ вручную.</p>';
+ }catch(ex){if(serial===dishSearchSerial&&$('#entry-form'))dest.innerHTML='<p class="micro">Интернет-каталог не ответил: '+esc(ex.message)+'. Можно выбрать справочную оценку выше или заполнить КБЖУ вручную.</p>';}
+ finally{if(button&&button.isConnected)button.disabled=previous;}
+}
+
+function openEntry(id=null,food=null,meal=null){const e=id?state.entries.find(x=>x.id===id):null;photo=e?.photo||null;editMode=food?'hundred':'portion';const initial=food||e||{};showDialog(e?'Изменить запись':'Добавить еду',`<form id="entry-form" data-id="${esc(id||'')}"><div class="form-grid"><label class="field"><span>Приём пищи</span><select name="meal">${mealNames.map(m=>`<option ${m===(e?.meal||meal||'Перекус')?'selected':''}>${m}</option>`).join('')}</select></label><label class="field"><span>Дата</span><input name="date" type="date" value="${e?.date||currentDate}" required></label></div><label class="field"><span>Что съел</span><input name="name" value="${esc(initial.name||'')}" maxlength="200" autocomplete="off" placeholder="Например, гречка" required><span class="micro" style="display:block;margin-top:6px">Начни печатать — варианты появятся ниже. Выбирать необязательно.</span></label><div class="dish-lookup" data-dish-lookup><div id="dish-suggestions" aria-live="polite"></div><div id="dish-online-results" aria-live="polite"></div><div class="dish-lookup-controls"><button type="button" class="secondary" data-action="dish-search" id="dish-search-btn">⌕ Найти ещё в интернете</button><button type="button" class="secondary" data-action="open-scanner">▥ Штрихкод</button></div><p class="micro" style="margin:8px 0 0">Выбери вариант, чтобы подставить КБЖУ на 100 г, или заполни поля ниже сам. Можно исправить любые значения.</p></div><div class="mode-switch"><button type="button" data-mode="portion" class="${editMode==='portion'?'active':''}">Вся порция</button><button type="button" data-mode="hundred" class="${editMode==='hundred'?'active':''}">На 100 г</button></div><label class="field"><span id="grams-label">${editMode==='hundred'?'Съедено, г':'Масса порции, г (необязательно)'}</span><input name="grams" inputmode="decimal" value="${e?.grams|| (food?'100':'')}" placeholder="Если известна"></label><div id="nutrition-label" class="micro" style="margin-bottom:10px">${editMode==='hundred'?'Данные продукта на 100 г':'КБЖУ всей съеденной порции'}</div>${inputs(initial)}<div id="portion-preview" class="portion-summary" hidden></div><label class="check"><input type="checkbox" name="estimated" ${initial.estimated!==false?'checked':''}>Приблизительная оценка</label><div class="photo-control"><button class="secondary" type="button" data-action="native-photo">${icon('plus')} Фото блюда</button><button class="text-button" type="button" id="remove-photo" ${photo?'':'hidden'}>Убрать фото</button></div><img id="photo-preview" class="photo-preview" ${photo?`src="${photo}"`:'hidden'} alt="Фото блюда"><p class="micro">Фото сохраняется только на iPhone как часть записи в дневнике.</p><label class="field" style="margin-top:14px"><span>Заметка</span><textarea name="note" maxlength="3000" placeholder="Масло, заправка, уточнения…">${esc(initial.note||'')}</textarea></label><p class="error" role="alert"></p><div class="form-actions">${e?'<button class="danger" type="button" data-action="delete-entry" data-id="'+esc(e.id)+'">Удалить</button>':''}<button type="submit" class="primary">${e?'Сохранить':'Добавить в дневник'}</button></div></form>`);dishChosenName=food?.name||null;dishLastTerm='';dishOnlineFoods=[];clearTimeout(dishDebounceTimer);updatePortion();if(!e&&!food)showDishSuggestions();}
+function updatePortion(){const f=$('#entry-form');if(!f)return;$('#grams-label').textContent=editMode==='hundred'?'Съедено, г':'Масса порции, г (необязательно)';$('#nutrition-label').textContent=editMode==='hundred'?'Данные продукта на 100 г':'КБЖУ всей съеденной порции';document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===editMode));const box=$('#portion-preview');box.hidden=editMode!=='hundred';if(editMode==='hundred'){try{const p=N.portion(parseValues(f),N.num(f.elements.grams.value));box.textContent=`Порция: ${fmt(p.kcal)} ккал · Б ${fmt(p.protein,1)} · Ж ${fmt(p.fat,1)} · У ${fmt(p.carbs,1)}`;}catch{box.textContent='Укажи массу и данные на 100 г — рассчитаем порцию.';}}}
+function openFood(id,barcode=''){const f=state.foods.find(x=>x.id===id)||{};showDialog(id?'Изменить продукт':'Свой продукт',`<form id="food-form" data-id="${esc(id||'')}"><label class="field"><span>Название</span><input name="name" value="${esc(f.name||'')}" required maxlength="200" placeholder="Название с упаковки"></label><label class="field"><span>Штрихкод (если есть, 8–14 цифр)</span><input name="barcode" value="${esc(f.barcode||barcode)}" placeholder="С упаковки" inputmode="numeric" maxlength="14"></label><p class="note">Все значения — на 100 г продукта (для некоторых напитков — на 100 мл).</p>${inputs(f)}<label class="check"><input type="checkbox" name="estimated" ${f.estimated?'checked':''}>Справочная оценка, не с этикетки</label><label class="field" style="margin-top:18px"><span>Заметка</span><textarea name="note" maxlength="3000">${esc(f.note||'')}</textarea></label><p class="error" role="alert"></p><div class="form-actions">${id?`<button type="button" class="danger" data-action="delete-food" data-id="${esc(id)}">Удалить</button>`:''}<button class="primary" type="submit">Сохранить продукт</button></div></form>`);}
+function openRecipe(id){const r=state.recipes.find(x=>x.id===id)||{};recipeItems=clone(r.items||[]);showDialog(id?'Изменить рецепт':'Новый рецепт',`<form id="recipe-form" data-id="${esc(id||'')}"><label class="field"><span>Название блюда</span><input name="name" value="${esc(r.name||'')}" maxlength="200" required placeholder="Например, плов с курицей"></label><div id="ingredients"></div><label class="field"><span>Добавить ингредиент из продуктов</span><select id="recipe-food">${options(state.foods,'Выбери продукт')}</select></label><div style="display:flex;gap:8px;margin-bottom:18px"><input id="ingredient-grams" inputmode="decimal" placeholder="Масса, г" aria-label="Масса ингредиента в граммах"><button class="secondary" type="button" data-action="add-ingredient">Добавить</button></div><p class="micro" style="margin-bottom:15px">Нужного ингредиента нет? Добавь его в «Настройки» → «Мои продукты».</p><label class="field"><span>Масса всего готового блюда, г</span><input name="yieldGrams" inputmode="decimal" value="${r.yieldGrams||''}" required placeholder="После приготовления"></label><div id="recipe-total" class="portion-summary"></div><label class="check"><input name="estimated" type="checkbox" ${r.estimated!==false?'checked':''}>Масса или состав приблизительные</label><label class="field" style="margin-top:16px"><span>Как готовить / заметки</span><textarea name="note" maxlength="3000">${esc(r.note||'')}</textarea></label><p class="error" role="alert"></p><div class="form-actions">${id?`<button class="danger" type="button" data-action="delete-recipe" data-id="${esc(id)}">Удалить</button>`:''}<button class="primary" type="submit">Сохранить рецепт</button></div></form>`);renderIngredients();}
+function renderIngredients(){const f=$('#recipe-form');if(!f)return;$('#ingredients').innerHTML=recipeItems.map((i,n)=>`<div class="ingredient"><span>${esc(i.name)}<small>${fmt(i.grams,1)} г · ${fmt(i.kcal*i.grams/100)} ккал</small></span><button type="button" class="icon-button" data-action="remove-ingredient" data-index="${n}" aria-label="Убрать ${esc(i.name)}">×</button></div>`).join('');try{const r=N.recipeValue(recipeItems,N.num(f.elements.yieldGrams.value));$('#recipe-total').textContent=`На 100 г: ${fmt(r.kcal)} ккал · Б ${fmt(r.protein,1)} · Ж ${fmt(r.fat,1)} · У ${fmt(r.carbs,1)}`;}catch{$('#recipe-total').textContent='Добавь ингредиенты и укажи выход готового блюда.';}}
+
+async function download(name,content,mime){try{const result=await porciaCall('export',{name,content});notify(result.saved?'Копия сохранена в выбранную папку':'Экспорт отменён');}catch(e){notify('Не удалось экспортировать: '+e.message);}}
+function exportBackup(){download('porcia-backup-'+N.dateKey()+'.json',JSON.stringify(state,null,2),'application/json');}
+function report(){const t=N.total(dayEntries()),r=N.remainder(t,state.goals);return [`Дневник питания · ${dateLong(currentDate)}`,`Статус: ${dayInfo().complete?'вся еда записана':'неполный день'}`,`Цель ${state.goals.kcal} ккал · белок ≥${state.goals.protein} г · жиры ≥${state.goals.fat} г · углеводы без цели`,'',...mealNames.flatMap(m=>dayEntries().filter(e=>e.meal===m).map(e=>`${m}: ${e.name}${e.grams?' — '+fmt(e.grams,1)+' г':''}; ${e.estimated?'≈':''}${fmt(e.kcal)} ккал, Б ${fmt(e.protein,1)}, Ж ${fmt(e.fat,1)}, У ${fmt(e.carbs,1)}${e.note?'\nЗаметка: '+e.note:''}`)),'',`Итого ${fmt(t.kcal)} ккал · Б ${fmt(t.protein,1)} · Ж ${fmt(t.fat,1)} · У ${fmt(t.carbs,1)}`,`${r.kcal>=0?'Осталось':'Сверх ориентира'}: ${fmt(Math.abs(r.kcal))} ккал. До минимума: белок ${fmt(r.protein,1)} г, жиры ${fmt(r.fat,1)} г.`,`Вода: ${fmt(dayInfo().water/1000,2)} л`,'Оценочные записи не являются точными измерениями.'].join('\n');}
+async function shareReport(){const txt=report();showDialog('Итог дня',`<p class="note">Скопируй отчёт в наш чат — я смогу учесть новые записи.</p><textarea id="report-text" class="report-text" readonly>${esc(txt)}</textarea><div class="form-actions"><button class="secondary" data-action="save-report">Файл</button><button class="primary" data-action="copy-report">Копировать</button></div>`);}
+function updateConnection(){$('#connection').textContent=busy?'Сохранение…':'Только на iPhone';}
+async function bootOffline(){}
+window.addEventListener('hashchange',()=>{render();window.scrollTo(0,0);});
+document.addEventListener('input',e=>{if(e.target.closest('#entry-form')&&e.target.name==='name'){
+  const term=e.target.value.trim();clearTimeout(dishDebounceTimer);dishOnlineFoods=[];dishSearchSerial++;
+  const d=$('#dish-online-results');if(d)d.innerHTML='';
+  if(dishChosenName&&normalizeDish(term)!==normalizeDish(dishChosenName)){
+    dishChosenName=null;const checked=$('#entry-form').querySelector('.dish-selected');if(checked)checked.remove();
+  }
+  showDishSuggestions();
+  if(term.length>=3){dishDebounceTimer=setTimeout(()=>{const form=$('#entry-form');if(form&&form.elements.name.value.trim()===term&&term!==dishLastTerm){dishLastTerm=term;dishSearch(null);}},1100);}
+ }if(e.target.id==='food-search'){$('#food-results').innerHTML=foodCards(state.foods.filter(f=>f.name.toLocaleLowerCase('ru').includes(e.target.value.toLocaleLowerCase('ru'))));}if(e.target.closest('#entry-form'))updatePortion();if(e.target.closest('#scan-confirm-form'))updateScanPortion();if(e.target.name==='yieldGrams')renderIngredients();});
+document.addEventListener('change',async e=>{const el=e.target;if(el.id==='selected-date'&&N.validDate(el.value)){currentDate=el.value;render();}if(el.id==='day-complete'){const next=clone(state);next.days[currentDate]={...dayInfo(),complete:el.checked};if(!await commit(next))render();}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target?.id==='barcode-input'){e.preventDefault();lookupBarcode(e.target.value);}if(e.key==='Enter'&&e.target.closest('#entry-form')&&e.target.name==='name'){e.preventDefault();dishSearch($('#dish-search-btn'));}});
+document.addEventListener('submit',async e=>{e.preventDefault();const form=e.target;try{const next=clone(state);if(form.id==='goal-form'){for(const k of ['kcal','protein','fat'])next.goals[k]=N.num(form.elements[k].value);for(const k of ['weight','carbs']){const v=form.elements[k].value.trim();next.goals[k]=v?N.num(v):null;}N.validate(next);if(await commit(next))notify('Цели сохранены');return;}
+if(form.id==='barcode-manual-form'){const code=form.elements.code.value;await quickLookup(code);return;}
+if(form.id==='weight-goal-form'){const raw=form.elements.weight.value.trim();next.goals.weight=raw?N.num(raw):null;N.validate(next);if(await commit(next)){closeDialog();notify('Цель веса сохранена');}return;}
+if(form.id==='weight-form'){const date=form.elements.date.value,kg=N.num(form.elements.kg.value),note=form.elements.note.value.trim(),original=form.dataset.original;
+if(!N.validDate(date)||!Number.isFinite(kg)||kg<20||kg>500)throw Error('Введи дату и вес от 20 до 500 кг');
+if((next.weights||[]).some(w=>w.date===date&&w.date!==original))throw Error('Вес за эту дату уже записан. Открой измерение в списке, чтобы исправить его.');
+next.weights=(next.weights||[]).filter(w=>w.date!==original);next.weights.push({date,kg:Math.round(kg*100)/100,note});
+if(await commit(next)){closeDialog();location.hash='stats';render();notify('Вес сохранён');}return;}
+
+if(form.id==='scan-confirm-form'){
+ const food=pendingScanFood;
+ if(!food)throw Error('Данные товара потеряны. Сканируй ещё раз.');
+ const grams=N.num(form.elements.grams.value),date=form.elements.date.value,meal=form.elements.meal.value;
+ const name=String(form.elements.name.value||'').trim();
+ if(!name)throw Error('Укажи название товара');
+ if(!Number.isFinite(grams)||grams<=0||grams>10000)throw Error('Введи массу порции от 0 до 10 000 г');
+ if(!N.validDate(date)||!mealNames.includes(meal))throw Error('Выбери приём пищи и дату');
+ const {result,missing}=scanFormNutrients(form);
+ if(missing.length)throw Error('Заполни недостающие КБЖУ с этикетки; неизвестные значения не равны нулю');
+ const totals=N.portion(result,grams),barcode=String(food.code||food.barcode||lastBarcode||'');
+ const note=(food.source==='local'?String(food.note||''):('Open Food Facts'+(barcode?' · '+barcode:''))).slice(0,3000);
+ const corrected=!!food.incomplete||N.KEYS.some(k=>result[k]!==food[k]);
+ next.entries.push({id:N.uid(),date,meal,name,grams,...totals,estimated:!!food.estimated,photo:null,note:note+(corrected?' · КБЖУ уточнены пользователем':'')});
+ next.days[date]={...(next.days[date]||{water:0}),complete:false};
+ if(form.elements.remember?.checked&&barcode){
+   const existing=next.foods.find(x=>x.barcode===barcode);
+   const saved={id:existing?.id||N.uid(),name,barcode,...result,estimated:false,note:'Сканирование · '+barcode+' · проверено/дополнено пользователем'};
+   next.foods=next.foods.filter(x=>x.barcode!==barcode);next.foods.push(saved);
+ }
+ if(await commit(next)){pendingScanFood=null;currentDate=date;closeDialog();location.hash='diary';render();notify('Добавлено в «'+meal+'»');}
+ return;
+}
+if(form.id==='entry-form'){const vals=parseValues(form),raw=form.elements.grams.value.trim(),grams=raw?N.num(raw):null,date=form.elements.date.value,name=form.elements.name.value.trim();if(!name||!N.validDate(date))throw Error('Укажи название и дату');if(grams!==null&&(!Number.isFinite(grams)||grams<=0||grams>10000))throw Error('Масса должна быть больше 0 и не больше 10 000 г');if(editMode==='hundred'&&grams===null)throw Error('Для пересчёта на 100 г укажи массу порции');const id=form.dataset.id||N.uid(),entry={id,date,meal:form.elements.meal.value,name,grams,...(editMode==='hundred'?N.portion(vals,grams):vals),estimated:form.elements.estimated.checked,photo,note:form.elements.note.value.trim()};const old=next.entries.find(x=>x.id===id);next.entries=next.entries.filter(x=>x.id!==id);next.entries.push(entry);next.days[date]={...(next.days[date]||{water:0}),complete:false};if(old&&old.date!==date&&next.days[old.date])next.days[old.date].complete=false;if(await commit(next)){currentDate=date;closeDialog();location.hash='diary';render();notify('Еда записана');}return;}
+if(form.id==='food-form'){const barcode=String(form.elements.barcode.value||'').trim();if(barcode&&(!/^\d{8}$|^\d{12,14}$/.test(barcode)||!PorciaEAN.check(barcode)))throw Error('Штрихкод содержит ошибку. Проверь цифры под полосками.');const f={id:form.dataset.id||N.uid(),name:form.elements.name.value.trim(),barcode,...parseValues(form),note:form.elements.note.value.trim(),estimated:form.elements.estimated.checked};if(!f.name)throw Error('Укажи название');next.foods=next.foods.filter(x=>x.id!==f.id);next.foods.push(f);if(await commit(next)){closeDialog();notify('Продукт сохранён');}return;}
+if(form.id==='recipe-form'){const y=N.num(form.elements.yieldGrams.value),r={id:form.dataset.id||N.uid(),name:form.elements.name.value.trim(),...N.recipeValue(recipeItems,y),items:clone(recipeItems),yieldGrams:y,note:form.elements.note.value.trim(),estimated:form.elements.estimated.checked||recipeItems.some(i=>i.estimated)};if(!r.name)throw Error('Укажи название');next.recipes=next.recipes.filter(x=>x.id!==r.id);next.recipes.push(r);if(await commit(next)){closeDialog();notify('Рецепт сохранён');}return;}}catch(ex){if(form.querySelector('.error'))err(form,ex.message);else notify(ex.message);}});
+document.addEventListener('click',async e=>{const mode=e.target.closest('[data-mode]');if(mode){const target=mode.dataset.mode,form=$('#entry-form'),g=N.num(form.elements.grams.value);if(target!==editMode&&Number.isFinite(g)&&g>0){try{const v=parseValues(form);for(const k of N.KEYS)form.elements[k].value=Number((v[k]*(target==='hundred'?100/g:g/100)).toFixed(3));}catch{}}editMode=target;updatePortion();return;}if(e.target.id==='remove-photo'){photo=null;$('#photo-preview').hidden=true;$('#remove-photo').hidden=true;return;}const b=e.target.closest('[data-action]');if(!b||busy)return;const a=b.dataset.action,id=b.dataset.id;switch(a){
+case'stats-range':statsRange=Number(b.dataset.value)||7;render();break;
+case'stats-macro':statsMacro=['protein','fat','carbs'].includes(b.dataset.value)?b.dataset.value:'protein';render();break;
+case'new-weight':openWeight();break;
+case'edit-weight':openWeight(b.dataset.date);break;
+case'weight-goal':openWeightGoal();break;
+case'delete-weight':{if(!await porciaCall('confirm',{message:'Удалить измерение веса за '+dateLong(b.dataset.date)+'?'}))break;
+ const next=clone(state);next.weights=(next.weights||[]).filter(w=>w.date!==b.dataset.date);if(await commit(next)){closeDialog();notify('Измерение удалено');}break;}
+case'dish-search':await dishSearch(b);break;
+case'dish-pick':{const source=b.dataset.source,i=Number(b.dataset.index);const f=source==='online'?dishOnlineFoods[i]:localDishHits[i];if(f)dishApply(f,source);break;}
+case'barcode-scan':await scanBarcode(b);break;
+case'scan-preview':if(pendingScanFood)openScanReview(pendingScanFood);else notify('Отсканируй товар ещё раз');break;
+case'cancel-scan':closeDialog();break;
+case'scan-correct':closeDialog();openFood(null,lastBarcode);break;
+case'barcode-lookup':await lookupBarcode($('#barcode-input')?.value);break;
+case'new-food-from-barcode':openFood(null,lastBarcode);break;
+case'open-scanner':{closeDialog();await quickScan(b);break;}
+
+case'online-search':{const term=String($('#online-search')?.value||'').trim();if(term.length<2){notify('Введи хотя бы 2 буквы');break;}const target=$('#online-results');target.innerHTML='<p class="note">Ищу продукты в Open Food Facts…</p>';b.disabled=true;try{remoteFoods=await porciaCall('searchFoods',{term});if($('#online-results'))$('#online-results').innerHTML=onlineCards(remoteFoods);}catch(ex){if($('#online-results'))$('#online-results').innerHTML='<p class="error">'+esc('Не удалось загрузить базу: '+ex.message)+'</p>';}finally{b.disabled=false;}break;}
+case'online-use':{const f=remoteFoods[Number(b.dataset.index)];if(f){openEntry(null,{...f,id:'online-'+f.code,note:'Open Food Facts · '+(f.brand||'')},null);}break;}
+case'online-save':{const f=remoteFoods[Number(b.dataset.index)];if(f){const next=clone(state);if(!next.foods.some(x=>x.barcode===f.code)){next.foods.push({id:N.uid(),name:f.name,barcode:f.code,kcal:f.kcal,protein:f.protein,fat:f.fat,carbs:f.carbs,estimated:false,note:'Open Food Facts · '+f.code});if(await commit(next))notify('Продукт сохранён в личной базе');}else notify('Этот штрихкод уже есть среди твоих продуктов');}break;}
+case'native-import':{try{const imported=await porciaCall('import');if(!imported)break;N.validate(imported);if(!await porciaCall('confirm',{message:`Восстановить ${imported.entries.length} записей из копии? Текущий дневник будет заменён.`}))break;if(await commit(imported))notify('Дневник восстановлен');}catch(ex){notify('Не удалось восстановить: '+ex.message);}break;}
+case'native-photo':{const form=$('#entry-form'),submit=form.querySelector('[type=submit]');submit.disabled=true;b.disabled=true;try{const result=await porciaCall('photo');if(result&&$('#entry-form')===form){photo=result;$('#photo-preview').src=result;$('#photo-preview').hidden=false;$('#remove-photo').hidden=false;}}catch(ex){err(form,'Не удалось открыть фото: '+ex.message);}finally{submit.disabled=false;b.disabled=false;}break;}
+case'prev':currentDate=N.shiftDate(currentDate,-1);render();break;case'next':currentDate=N.shiftDate(currentDate,1);render();break;case'today':currentDate=N.dateKey();render();break;case'add':openEntry(null,null,b.dataset.meal);break;case'edit-entry':openEntry(id);break;case'new-food':openFood();break;case'edit-food':openFood(id);break;case'use-food':openEntry(null,state.foods.find(x=>x.id===id));break;case'use-recipe':openEntry(null,state.recipes.find(x=>x.id===id));break;case'new-recipe':openRecipe();break;case'edit-recipe':openRecipe(id);break;case'add-ingredient':{const f=state.foods.find(x=>x.id===$('#recipe-food').value),g=N.num($('#ingredient-grams').value);if(!f||!Number.isFinite(g)||g<=0||g>10000){err($('#recipe-form'),'Выбери продукт и массу от 0 до 10 000 г');break;}recipeItems.push({...clone(f),grams:g});$('#ingredient-grams').value='';$('#recipe-form .error').textContent='';renderIngredients();break;}case'remove-ingredient':recipeItems.splice(Number(b.dataset.index),1);renderIngredients();break;case'delete-entry':case'delete-food':case'delete-recipe':{if(!await porciaCall('confirm',{message:'Удалить эту запись?'}))break;const next=clone(state),key=a==='delete-entry'?'entries':a==='delete-food'?'foods':'recipes',old=next[key].find(x=>x.id===id);next[key]=next[key].filter(x=>x.id!==id);if(key==='entries'&&next.days[old.date])next.days[old.date].complete=false;if(await commit(next)){closeDialog();notify('Удалено');}break;}case'water':{const next=clone(state);next.days[currentDate]={...dayInfo(),water:Math.min(20000,Math.max(0,dayInfo().water+Number(b.dataset.amount)))};await commit(next);break;}case'open-day':currentDate=b.dataset.date;location.hash='diary';render();break;case'export':exportBackup();break;case'report':shareReport();break;case'copy-report':try{await porciaCall('copy',{text:$('#report-text').value});notify('Отчёт скопирован');}catch{$('#report-text').focus();$('#report-text').select();notify('Выдели текст и нажми «Копировать».');}break;case'save-report':download('nutrition-'+currentDate+'.txt',$('#report-text').value,'text/plain;charset=utf-8');break;}});
+async function init(){try{db=await openDB();const saved=await readState();state=saved?N.validate(saved):N.initial();if(!saved)await writeState(state);render();}catch(ex){warn('Не удалось открыть дневник: '+ex.message);$('#screen').innerHTML='<div class="empty"><h2>Дневник не открыт</h2><p>Существующие файлы не изменены. Закрой окно и попробуй запустить «Порцию» снова.</p></div>';}}
+init();
+</script><noscript>JavaScript недоступен. Для работы включи JavaScript в Safari.</noscript></body></html>
