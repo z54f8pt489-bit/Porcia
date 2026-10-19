@@ -72,7 +72,7 @@ window.porciaCall=(action,payload={})=>new Promise((resolve,reject)=>{
 });
 window.__porciaReceive=msg=>{const p=pending.get(msg.id);if(!p)return;pending.delete(msg.id);if(msg.ok)p.resolve(msg.value);else p.reject(Error(msg.error||'Не удалось выполнить действие'));};
 })();
-</script><script src="pwa-bridge.js"></script><script>(function(root){
+</script><script src="vendor/zxing.min.js"></script><script src="pwa-bridge.js"></script><script>(function(root){
 'use strict';
 const KEYS=['kcal','protein','fat','carbs'];
 const dateKey=(date=new Date())=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
@@ -286,11 +286,44 @@ function startCameraScanner(){
   document.body.appendChild(overlay);
   const video=overlay.querySelector('#porcia-live-video'),status=overlay.querySelector('#camera-status');
   const cvs=document.createElement('canvas');const ctx=cvs.getContext('2d',{willReadFrequently:true});
-  let stream=null,tick=null,closed=false,misses=0;
-  const nativeDetector=window.BarcodeDetector?new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']}):null;
+  let stream=null,tick=null,closed=false,misses=0,reader=null,quietTimer=null;
+  let nativeDetector=null;
+  try{if(window.BarcodeDetector)nativeDetector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});}catch{}
+  function startZXing(){
+    if(!window.ZXing?.BrowserMultiFormatReader)return false;
+    try{
+      const hints=new Map();
+      hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A]);
+      hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+      reader=new ZXing.BrowserMultiFormatReader(hints,300);
+      // The ZXing reader scans full frames and different image rows; Safari does not provide BarcodeDetector.
+      Promise.resolve(reader.decodeFromVideoElementContinuously(video,(result,error)=>{
+        if(closed||!result)return;
+        const code=String(typeof result.getText==='function'?result.getText():result.text||'').trim();
+        if(!PorciaEAN.check(code))return;
+        status.textContent='Штрихкод распознан: '+code+' — открываю товар';
+        stop(code);
+      })).catch(error=>{
+        if(closed)return;
+        console.warn('ZXing decoder failed, switching to simple reader',error);
+        try{reader?.reset();}catch{}
+        reader=null;
+        status.textContent='Переключаю режим распознавания камеры…';
+        tick=setTimeout(scanFrame,250);
+      });
+      return true;
+    }catch(error){
+      console.warn('ZXing initialization failed',error);
+      try{reader?.reset();}catch{}
+      reader=null;
+      return false;
+    }
+  }
   function stop(value){
     if(closed)return;closed=true;
     if(tick!==null)clearTimeout(tick);
+    if(quietTimer!==null)clearTimeout(quietTimer);
+    try{reader?.reset();}catch{}
     if(stream)for(const track of stream.getTracks())track.stop();
     video.pause();video.srcObject=null;overlay.remove();resolve(value||null);
   }
@@ -351,8 +384,13 @@ function startCameraScanner(){
       if(closed){stream.getTracks().forEach(t=>t.stop());return;}
       video.srcObject=stream;await video.play();
       if(closed)return;
-      status.textContent='Камера включена. Наведи на штрихкод.';
-      tick=setTimeout(scanFrame,350);
+      status.textContent='Камера включена. Распознаю штрихкод…';
+      const usingZXing=startZXing();
+      if(!usingZXing)tick=setTimeout(scanFrame,350);
+      // Clear user feedback if recognition takes too long, without falsely claiming a scan succeeded.
+      quietTimer=setTimeout(()=>{
+        if(!closed)status.textContent='Камера работает, но код пока не распознан. Держи полоски прямо, крупно и без бликов; чуть отодвинь телефон, чтобы камера сфокусировалась.';
+      },9000);
     }catch(e){
       if(closed)return;
       const reason=String(e?.name||'')+' '+String(e?.message||e);
@@ -479,7 +517,7 @@ function openWeight(date=null){
 function openWeightGoal(){const v=state.goals.weight;showDialog('Целевой вес',`<form id="weight-goal-form"><label class="field"><span>Моя цель, кг</span><input type="text" name="weight" inputmode="decimal" placeholder="Например, 75,3" value="${Number.isFinite(v)?fmt(v,2):''}"></label><p class="micro">Если оставить поле пустым, цель не будет отображаться.</p><p class="error" role="alert"></p><div class="form-actions"><button type="submit" class="primary">Сохранить цель</button></div></form>`);}
 
 function historyView(){const today=N.dateKey(),from=N.shiftDate(today,-6),st=N.stats(state,from,today),dates=[...new Set([...state.entries.map(e=>e.date),...Object.keys(state.days)])].sort().reverse(),week=Array.from({length:7},(_,i)=>N.shiftDate(from,i)),max=Math.max(state.goals.kcal,...week.map(d=>N.total(dayEntries(d)).kcal));return `<div class="title-row"><div><h1>Твоя история</h1><p class="subtitle">Последние 7 дней · ${st.count} полностью заполненных</p></div></div><div class="stats-grid">${[['kcal','Ккал в среднем'],['protein','Белки, г в среднем'],['fat','Жиры, г в среднем']].map(([k,l])=>`<div class="stat"><strong>${st.count?fmt(st.average[k]):'—'}</strong><span>${l}</span></div>`).join('')}</div><div class="small-card"><h3>Записанные калории</h3><div class="week-chart">${week.map(d=>{const e=dayEntries(d),t=N.total(e),full=dayInfo(d).complete;return `<div class="chart-col"><span>${e.length?fmt(t.kcal):'—'}</span><div class="chart-bar ${full?'':'partial'}" style="height:${e.length?Math.max(2,t.kcal/max*95):2}px" title="${dateLong(d)}: ${e.length?t.kcal+' ккал':'нет записей'}"></div><span>${d.slice(8)}.${d.slice(5,7)}</span></div>`;}).join('')}</div><p class="micro">Штриховка — неполный день. Пропуски не считаются нулевым питанием.</p></div><div class="section-head"><h2>Все записи</h2></div><div class="history-list">${dates.map(d=>{const e=dayEntries(d),t=N.total(e);return `<button class="history-row" data-action="open-day" data-date="${d}"><div><strong>${dateLong(d)}</strong><span>${dayInfo(d).complete?'Вся еда записана':'Неполный день'}${e.some(x=>x.estimated)?' · есть оценки':''}</span></div><div class="right"><strong>${e.length?fmt(t.kcal)+' ккал':'Только вода'}</strong><span>Б ${fmt(t.protein)} · Ж ${fmt(t.fat)} · У ${fmt(t.carbs)}</span></div></button>`;}).join('')||'<div class="empty">История появится после первой записи.</div>'}</div>`;}
-function settingsView(){return `<div class="title-row"><div><h1>Настройки</h1><p class="subtitle">Цели, сканер и сохранность дневника.</p></div></div><div class="settings-grid"><section class="small-card"><h2>Дневные ориентиры</h2><form id="goal-form"><label class="field"><span>Калории, ккал</span><input name="kcal" type="number" min="1" max="10000" step="1" value="${state.goals.kcal}" required></label><div class="form-grid"><label class="field"><span>Белок, минимум г</span><input name="protein" type="number" min="0" max="1000" step="1" value="${state.goals.protein}" required></label><label class="field"><span>Жиры, минимум г</span><input name="fat" type="number" min="0" max="1000" step="1" value="${state.goals.fat}" required></label></div><div class="form-grid"><label class="field"><span>Углеводы, г (необязательно)</span><input name="carbs" inputmode="decimal" type="text" placeholder="Без цели" value="${state.goals.carbs??''}"></label><label class="field"><span>Целевой вес, кг (необязательно)</span><input name="weight" inputmode="decimal" type="text" placeholder="Например, 75,3" value="${state.goals.weight??''}"></label></div><p class="micro" style="margin-bottom:15px">Ориентиры применяются ко всем дням. Средние значения за неполные дни не учитываются.</p><button class="primary" type="submit">Сохранить цели</button></form></section><section class="small-card"><h2>Сканирование продуктов</h2><p class="note">Кнопка «Сканировать» запускает камеру прямо в «Порции». Снимать фото и настраивать «Команды» не требуется. Разреши доступ к камере для сайта в Safari при первом запуске. На некоторых моделях распознавание может зависеть от освещения и фокуса. После распознавания корректного кода камера закрывается сразу. Затем откроется карточка товара с КБЖУ и подтверждением порции.</p><button class="secondary" type="button" data-action="open-scanner">▥ Сканировать сейчас</button></section><section class="small-card"><h2>Мои продукты</h2><p class="note">Раздел из нижнего меню удалён, но твои сохранённые продукты доступны для рецептов и ручного ввода.</p><button class="secondary" type="button" data-action="new-food">+ Добавить продукт вручную</button><div style="max-height:350px;overflow:auto;margin-top:12px">${foodCards(state.foods)}</div></section><section class="small-card"><h2>Твои данные</h2><p class="note">Дневник, измерения веса, рецепты и фото еды хранятся локально на iPhone в данных этого сайта. Названия продуктов и штрихкоды передаются в Open Food Facts при поиске. Фотографии блюд не отправляются в сеть.</p><div class="stack"><button class="secondary" data-action="export">Скачать резервную копию</button><button class="secondary" data-action="native-import">Восстановить из копии</button></div><p class="note">Если удалить данные сайта Safari или очистить хранилище приложения, записи могут быть потеряны. Регулярно сохраняй резервную копию.</p></section><section class="small-card"><h2>Порция на экране Домой</h2><p class="note">Открой размещённый по HTTPS адрес этого приложения в Safari, затем выбери «Поделиться» → «На экран Домой» → «Добавить». Scriptable и «Команды» не требуются.</p><ol class="install-steps"><li>Открой HTTPS-адрес приложения в Safari на iPhone.</li><li>Нажми значок «Поделиться» и выбери «На экран Домой».</li><li>Нажми «Добавить» и запускай «Порцию» через значок.</li></ol><p class="micro">Порция · PWA 1.0 · часовой пояс Москва</p></section></div>`;}
+function settingsView(){return `<div class="title-row"><div><h1>Настройки</h1><p class="subtitle">Цели, сканер и сохранность дневника.</p></div></div><div class="settings-grid"><section class="small-card"><h2>Дневные ориентиры</h2><form id="goal-form"><label class="field"><span>Калории, ккал</span><input name="kcal" type="number" min="1" max="10000" step="1" value="${state.goals.kcal}" required></label><div class="form-grid"><label class="field"><span>Белок, минимум г</span><input name="protein" type="number" min="0" max="1000" step="1" value="${state.goals.protein}" required></label><label class="field"><span>Жиры, минимум г</span><input name="fat" type="number" min="0" max="1000" step="1" value="${state.goals.fat}" required></label></div><div class="form-grid"><label class="field"><span>Углеводы, г (необязательно)</span><input name="carbs" inputmode="decimal" type="text" placeholder="Без цели" value="${state.goals.carbs??''}"></label><label class="field"><span>Целевой вес, кг (необязательно)</span><input name="weight" inputmode="decimal" type="text" placeholder="Например, 75,3" value="${state.goals.weight??''}"></label></div><p class="micro" style="margin-bottom:15px">Ориентиры применяются ко всем дням. Средние значения за неполные дни не учитываются.</p><button class="primary" type="submit">Сохранить цели</button></form></section><section class="small-card"><h2>Сканирование продуктов</h2><p class="note">Кнопка «Сканировать» запускает камеру прямо в «Порции». Снимать фото и настраивать «Команды» не требуется. Разреши доступ к камере для сайта в Safari при первом запуске. На некоторых моделях распознавание может зависеть от освещения и фокуса. После распознавания корректного кода камера закрывается сразу. Затем откроется карточка товара с КБЖУ и подтверждением порции.</p><button class="secondary" type="button" data-action="open-scanner">▥ Сканировать сейчас</button></section><section class="small-card"><h2>Мои продукты</h2><p class="note">Раздел из нижнего меню удалён, но твои сохранённые продукты доступны для рецептов и ручного ввода.</p><button class="secondary" type="button" data-action="new-food">+ Добавить продукт вручную</button><div style="max-height:350px;overflow:auto;margin-top:12px">${foodCards(state.foods)}</div></section><section class="small-card"><h2>Твои данные</h2><p class="note">Дневник, измерения веса, рецепты и фото еды хранятся локально на iPhone в данных этого сайта. Названия продуктов и штрихкоды передаются в Open Food Facts при поиске. Фотографии блюд не отправляются в сеть.</p><div class="stack"><button class="secondary" data-action="export">Скачать резервную копию</button><button class="secondary" data-action="native-import">Восстановить из копии</button></div><p class="note">Если удалить данные сайта Safari или очистить хранилище приложения, записи могут быть потеряны. Регулярно сохраняй резервную копию.</p></section><section class="small-card"><h2>Порция на экране Домой</h2><p class="note">Открой размещённый по HTTPS адрес этого приложения в Safari, затем выбери «Поделиться» → «На экран Домой» → «Добавить». Scriptable и «Команды» не требуются.</p><ol class="install-steps"><li>Открой HTTPS-адрес приложения в Safari на iPhone.</li><li>Нажми значок «Поделиться» и выбери «На экран Домой».</li><li>Нажми «Добавить» и запускай «Порцию» через значок.</li></ol><p class="micro">Порция · PWA 1.1 · часовой пояс Москва</p></section></div>`;}
 function showDialog(title,body){$('#dialog-title').textContent=title;$('#dialog-body').innerHTML=body;if(!$('#editor').open)$('#editor').showModal();}
 function closeDialog(){if(!busy)$('#editor').close();}
 $('#close-dialog').onclick=closeDialog;
