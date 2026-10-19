@@ -1,5 +1,5 @@
-const CACHE='porcia-pwa-v1.0';
-const CORE=['./','./index.html','./pwa-bridge.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./favicon.png'];
+const CACHE='porcia-pwa-v1.1';
+const CORE=['./','./index.html','./pwa-bridge.js','./vendor/zxing.min.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./favicon.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
 });
@@ -9,8 +9,16 @@ self.addEventListener('activate',event=>{
 self.addEventListener('fetch',event=>{
   const req=event.request;
   if(req.method!=='GET' || new URL(req.url).origin!==self.location.origin)return;
+  const isPage=req.mode==='navigate'||new URL(req.url).pathname.endsWith('/index.html');
+  if(isPage){
+    event.respondWith(fetch(req).then(response=>{
+      if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(req,copy));}
+      return response;
+    }).catch(async()=>await caches.match(req)||await caches.match('./index.html')));
+    return;
+  }
   event.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(response=>{
-    if(response.ok&&new URL(req.url).pathname.endsWith('index.html')){const copy=response.clone();caches.open(CACHE).then(c=>c.put(req,copy));}
+    if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(req,copy));}
     return response;
   })));
 });
