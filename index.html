@@ -792,10 +792,10 @@ function teloShowMotivation(){
 }
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden){teloMotivationWasHiddenAt=Date.now();return;}
- if(teloMotivationWasHiddenAt!==null&&Date.now()-teloMotivationWasHiddenAt>=120000){teloMotivationWasHiddenAt=null;setTimeout(teloShowMotivation,350);}
+ if(teloMotivationWasHiddenAt!==null){teloMotivationWasHiddenAt=null;setTimeout(teloShowMotivation,350);}
 });
 window.addEventListener('pagehide',()=>{teloMotivationWasHiddenAt=Date.now();});
-window.addEventListener('pageshow',event=>{if(event.persisted&&teloMotivationWasHiddenAt!==null&&Date.now()-teloMotivationWasHiddenAt>=120000){teloMotivationWasHiddenAt=null;setTimeout(teloShowMotivation,350);}});
+window.addEventListener('pageshow',event=>{if(event.persisted&&teloMotivationWasHiddenAt!==null){teloMotivationWasHiddenAt=null;setTimeout(teloShowMotivation,350);}});
 async function init(){try{db=await openDB();const saved=await readState();state=saved?N.validate(saved):N.initial();if(!saved)await writeState(state);render();requestAnimationFrame(teloShowMotivation);}catch(ex){warn('Не удалось открыть дневник: '+ex.message);$('#screen').innerHTML='<div class="empty"><h2>Дневник не открыт</h2><p>Существующие файлы не изменены. Закрой окно и попробуй запустить «Тело 2.0» снова.</p></div>';}}
 init();
 </script><noscript>JavaScript недоступен. Для работы включи JavaScript в Safari.</noscript></body></html>
