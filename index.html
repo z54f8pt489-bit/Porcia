@@ -54,6 +54,30 @@
 #porcia-camera-overlay .camera-fallback input{min-width:155px;flex:1;background:white!important;color:#1c4035!important;font-size:18px;border:0;border-radius:10px;padding:12px}
 #porcia-camera-overlay .camera-fallback button{background:#ddecce;color:#123b2b;border:0}
 #porcia-camera-overlay .camera-error{color:#ffe5a8;font-weight:600}
+
+/* Тело 2.0 — приветствие при открытии; независимый от дневника слой. */
+#telo-motivation{position:fixed;inset:0;z-index:80000;display:grid;place-items:center;padding:max(18px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom));background:rgba(15,34,27,.65);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);overflow-y:auto}
+#telo-motivation *{box-sizing:border-box}
+#telo-motivation .tm-panel{--tm-glow:#ecf7dd;width:min(100%,420px);max-height:min(780px,96dvh);overflow:auto;position:relative;background:#fffef8;color:#1d3c2e;border-radius:28px;padding:24px 24px 22px;box-shadow:0 26px 75px #07180d5c;border:1px solid #ffffffab}
+#telo-motivation .tm-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#telo-motivation .tm-eyebrow{font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#66816f}
+#telo-motivation .tm-dismiss{appearance:none;border:1px solid #d9e6da;background:#f4f7ee;color:#284c37;width:36px;height:36px;border-radius:12px;font-size:23px;line-height:1;cursor:pointer;padding:0}
+#telo-motivation .tm-art{height:178px;margin:15px 0 18px;border-radius:23px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(circle at 20% 26%,#ffffffb9 0 10%,transparent 11%),radial-gradient(circle at 75% 60%,#ffffff94 0 16%,transparent 17%),var(--tm-glow)}
+#telo-motivation .tm-art::before,#telo-motivation .tm-art::after{content:'';position:absolute;width:145px;height:145px;border:3px solid #ffffff9c;border-radius:50%;left:-39px;top:-58px}
+#telo-motivation .tm-art::after{left:auto;top:auto;right:-62px;bottom:-82px;width:225px;height:225px}
+#telo-motivation .tm-emoji{font-size:98px;line-height:1;filter:drop-shadow(0 14px 10px #25331c2a);transform:rotate(-7deg);z-index:1}
+#telo-motivation .tm-sticker{z-index:2;position:absolute;right:13px;top:15px;border:1px solid #ffffff91;background:#fffffff0;border-radius:99px;padding:7px 11px;color:#34543b;font-size:12px;font-weight:800;transform:rotate(7deg)}
+#telo-motivation .tm-category{display:inline-flex;background:#e8f1dd;color:#376044;border-radius:999px;font-size:12px;font-weight:800;padding:6px 11px}
+#telo-motivation h2{font-size:27px;line-height:1.13;letter-spacing:-.65px;margin:15px 0 12px;color:#173c2a}
+#telo-motivation .tm-message{font-size:17px;line-height:1.45;color:#485e4e;margin:0 0 13px}
+#telo-motivation .tm-context{font-size:13px;line-height:1.45;background:#eff3ea;border-radius:13px;padding:11px 12px;margin:0 0 17px;color:#526a5b}
+#telo-motivation .tm-actions{display:grid;grid-template-columns:1fr;gap:9px}
+#telo-motivation .tm-action{display:flex;align-items:center;justify-content:center;width:100%;min-height:51px;padding:10px 14px;border-radius:15px;border:0;font:inherit;font-size:16px;font-weight:800;cursor:pointer}
+#telo-motivation .tm-action-main{background:#30694a;color:white}
+#telo-motivation .tm-action-secondary{background:#ecf2e8;color:#345443}
+#telo-motivation .tm-footer{font-size:11px;color:#819184;text-align:center;margin:15px 0 0}
+@media(max-height:670px){#telo-motivation{place-items:start center}#telo-motivation .tm-art{height:105px;margin:8px 0 9px}#telo-motivation .tm-emoji{font-size:63px}#telo-motivation h2{font-size:23px;margin:8px 0}#telo-motivation .tm-panel{padding:18px}}
+@media(prefers-reduced-motion:no-preference){#telo-motivation .tm-panel{animation:tm-enter .33s cubic-bezier(.25,.9,.35,1) both}@keyframes tm-enter{from{opacity:.35;transform:translateY(18px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}}
 </style><title>Тело 2.0 — питание и вес</title></head><body>
 <div id="storage-warning" class="warning" hidden></div>
 <div class="shell"><aside class="sidebar"><a class="brand" href="#diary" aria-label="Тело 2.0, дневник"><span class="brand-mark">Т</span><span>Тело <span style="font-size:.65em;vertical-align:baseline">2.0</span><span class="brand-sub">Твой дневник питания</span></span></a><nav id="nav" aria-label="Разделы"></nav><div class="side-note"><span class="local-dot"></span> На твоём устройстве<p>Еда, привычки и немного<br>больше ясности.</p></div></aside>
@@ -713,6 +737,65 @@ case'online-save':{const f=remoteFoods[Number(b.dataset.index)];if(f){if(state.f
 case'native-import':{try{const imported=await porciaCall('import');if(!imported)break;N.validate(imported);if(!await porciaCall('confirm',{message:`Восстановить ${imported.entries.length} записей из копии? Текущий дневник будет заменён.`}))break;if(await commit(imported))notify('Дневник восстановлен');}catch(ex){notify('Не удалось восстановить: '+ex.message);}break;}
 case'native-photo':{const form=$('#entry-form'),submit=form.querySelector('[type=submit]');submit.disabled=true;b.disabled=true;try{const result=await porciaCall('photo');if(result&&$('#entry-form')===form){photo=result;$('#photo-preview').src=result;$('#photo-preview').hidden=false;$('#remove-photo').hidden=false;}}catch(ex){err(form,'Не удалось открыть фото: '+ex.message);}finally{submit.disabled=false;b.disabled=false;}break;}
 case'prev':currentDate=N.shiftDate(currentDate,-1);render();break;case'next':currentDate=N.shiftDate(currentDate,1);render();break;case'today':currentDate=N.dateKey();render();break;case'add':openEntry(null,null,b.dataset.meal);break;case'edit-entry':openEntry(id);break;case'new-food':openFood();break;case'edit-food':openFood(id);break;case'use-food':openEntry(null,state.foods.find(x=>x.id===id));break;case'use-recipe':openEntry(null,state.recipes.find(x=>x.id===id));break;case'new-recipe':openRecipe();break;case'edit-recipe':openRecipe(id);break;case'add-ingredient':{const f=state.foods.find(x=>x.id===$('#recipe-food').value),g=N.num($('#ingredient-grams').value);if(!f||!Number.isFinite(g)||g<=0||g>10000){err($('#recipe-form'),'Выбери продукт и массу от 0 до 10 000 г');break;}recipeItems.push({...clone(f),grams:g});$('#ingredient-grams').value='';$('#recipe-form .error').textContent='';renderIngredients();break;}case'remove-ingredient':recipeItems.splice(Number(b.dataset.index),1);renderIngredients();break;case'delete-entry':case'delete-food':case'delete-recipe':{if(!await porciaCall('confirm',{message:'Удалить эту запись?'}))break;const next=clone(state),key=a==='delete-entry'?'entries':a==='delete-food'?'foods':'recipes',old=next[key].find(x=>x.id===id);next[key]=next[key].filter(x=>x.id!==id);if(key==='entries'&&next.days[old.date])next.days[old.date].complete=false;if(await commit(next)){closeDialog();notify('Удалено');}break;}case'water':{const next=clone(state);next.days[currentDate]={...dayInfo(),water:Math.min(20000,Math.max(0,dayInfo().water+Number(b.dataset.amount)))};await commit(next);break;}case'open-day':currentDate=b.dataset.date;location.hash='diary';render();break;case'export':exportBackup();break;case'report':shareReport();break;case'copy-report':try{await porciaCall('copy',{text:$('#report-text').value});notify('Отчёт скопирован');}catch{$('#report-text').focus();$('#report-text').select();notify('Выдели текст и нажми «Копировать».');}break;case'save-report':download('nutrition-'+currentDate+'.txt',$('#report-text').value,'text/plain;charset=utf-8');break;}});
-async function init(){try{db=await openDB();const saved=await readState();state=saved?N.validate(saved):N.initial();if(!saved)await writeState(state);render();}catch(ex){warn('Не удалось открыть дневник: '+ex.message);$('#screen').innerHTML='<div class="empty"><h2>Дневник не открыт</h2><p>Существующие файлы не изменены. Закрой окно и попробуй запустить «Тело 2.0» снова.</p></div>';}}
+
+// Мотивация — независима от хранилища дневника: только порядковый номер фразы в localStorage.
+const TELO_MOTIVATIONS=[
+ {tag:'Маленький шаг',emoji:'🥗',title:'Не идеальный день. Твой день.',body:'Одна честная запись в дневнике важнее идеального плана, который начнётся «с понедельника».',sticker:'Начни сегодня',color:'#e3f2d4'},
+ {tag:'Движение',emoji:'🚶',title:'Прогулка тоже считается.',body:'Необязательно устраивать марафон. Несколько минут движения — уже хорошее начало.',sticker:'+ к настрою',color:'#dbeef4'},
+ {tag:'С улыбкой',emoji:'🛋️',title:'Диван подождёт.',body:'Он никуда не убежит. А вот короткая прогулка подарит сегодняшнему дню ещё одну хорошую привычку.',sticker:'Диван: 😢',color:'#f6e7d6'},
+ {tag:'Питание',emoji:'🍎',title:'Запиши. Не осуждай.',body:'Дневник нужен не для оценки еды, а чтобы лучше понимать своё питание и находить закономерности.',sticker:'Без оценок',color:'#f5e5d9'},
+ {tag:'Восстановление',emoji:'😴',title:'Сон — тоже часть плана.',body:'Восстановление помогает держать ритм. Иногда лучший вклад в завтра — лечь спать вовремя.',sticker:'Режим заботы',color:'#e6e8fb'},
+ {tag:'С улыбкой',emoji:'🥦',title:'Брокколи не судит.',body:'И дневник тоже. Он просто помогает заметить, что действительно происходит с питанием.',sticker:'Ты молодец',color:'#e7f6d9'},
+ {tag:'Физическая активность',emoji:'💪',title:'Сила растёт с повторениями.',body:'Регулярные посильные нагрузки важнее редкого героического подвига в спортзале.',sticker:'Стабильность',color:'#e6e7f7'},
+ {tag:'Привычка',emoji:'📝',title:'Сегодня — одна запись.',body:'Не нужно помнить всё сразу. Начни с ближайшего приёма пищи и постепенно выстраивай привычку.',sticker:'Легко начать',color:'#e6f1e9'},
+ {tag:'С улыбкой',emoji:'🐢',title:'Черепаха знает секрет.',body:'Не скорость, а регулярность. Медленные шаги тоже ведут вперёд.',sticker:'Без гонки',color:'#e7f5ea'},
+ {tag:'Здоровые привычки',emoji:'💧',title:'Вода — маленький ритуал.',body:'Сделай пару глотков, когда хочется пить. Привычки удобнее сохранять, когда они простые.',sticker:'Проверка воды',color:'#daf0f6'},
+ {tag:'Движение',emoji:'🎧',title:'Любимая музыка — и вперёд.',body:'Включи один трек и немного пройдись. Не каждый выход из дома должен быть тренировкой.',sticker:'На один трек',color:'#eee7fb'},
+ {tag:'Осознанность',emoji:'🧠',title:'Цифры — инструмент, не оценка.',body:'Вес и калории показывают тенденции, а не твою ценность. Смотри на динамику спокойно.',sticker:'Смотри шире',color:'#e8f1eb'},
+ {tag:'С улыбкой',emoji:'🍪',title:'Печенье не враг.',body:'Один продукт ничего не говорит о твоём прогрессе. Важнее общая картина и устойчивые привычки.',sticker:'Без драмы',color:'#f5e7cd'},
+ {tag:'Физическая активность',emoji:'🚲',title:'Движение бывает весёлым.',body:'Велосипед, прогулка, танцы дома — выбирай то, что захочется повторить.',sticker:'Не только зал',color:'#dff3e8'},
+ {tag:'Привычка',emoji:'🌱',title:'Прогресс любит простоту.',body:'Сегодня записал еду, завтра прогулялся, послезавтра вовремя лёг спать. Так складывается система.',sticker:'Рост каждый день',color:'#e7f5da'},
+ {tag:'С улыбкой',emoji:'🏃',title:'Кроссовки уже в курсе.',body:'Осталось договориться с ногами. Можно начать с десяти минут без особого спортивного подвига.',sticker:'Ноги: 👀',color:'#dceff2'},
+ {tag:'Забота о себе',emoji:'🫶',title:'Относись к телу как к союзнику.',body:'Ему нужны еда, сон, движение и восстановление. Не наказания и бесконечные запреты.',sticker:'Тело — команда',color:'#f4e4ed'},
+ {tag:'Питание',emoji:'🍳',title:'Замечай, что помогает.',body:'Записи в дневнике со временем покажут, какие блюда дают сытость и подходят твоему ритму дня.',sticker:'Исследуй себя',color:'#fff0d9'},
+ {tag:'Движение',emoji:'🌤️',title:'Свежий воздух ждёт.',body:'Если есть возможность — выйди ненадолго на улицу. Не для отчёта, а для собственного удовольствия.',sticker:'Мини-перерыв',color:'#e5f1fc'},
+ {tag:'С улыбкой',emoji:'📊',title:'График не начальник.',body:'Вес может колебаться. Смотри на тенденцию за недели, а не на одну цифру утром.',sticker:'Спокойный взгляд',color:'#e3f2ed'},
+ {tag:'Привычка',emoji:'🎯',title:'Лучше «сделал», чем «идеально».',body:'Выбери одно выполнимое действие на сегодня. Реальные привычки растут из реальных шагов.',sticker:'Сегодня можно',color:'#eceadb'},
+ {tag:'Спорт',emoji:'🏋️',title:'Повторить — уже победа.',body:'Выполнимая тренировка, к которой хочется возвращаться, полезнее слишком тяжёлого старта.',sticker:'Без перегибов',color:'#e6eafb'},
+ {tag:'С улыбкой',emoji:'🤸',title:'Разминка — не мелочь.',body:'Даже если тело сегодня настроено только на потягивания, это лучше, чем спорить с диваном весь вечер.',sticker:'Договорились',color:'#ebf5de'},
+ {tag:'Здоровый ритм',emoji:'🧘',title:'Не всё должно быть быстро.',body:'Здоровые привычки — это долгий проект. Терпение, отдых и последовательность работают вместе.',sticker:'В своём темпе',color:'#eae9fa'},
+ {tag:'Питание',emoji:'🥣',title:'Один приём пищи за раз.',body:'Не нужно догонять вчерашний день. Открой дневник и начни с того, что есть сейчас.',sticker:'Шаг №1',color:'#f6eddf'},
+ {tag:'С улыбкой',emoji:'🕺',title:'Танец на кухне засчитан.',body:'Поймал любимый трек? Подвигайся пару минут. Бывает, что полезное ещё и смешное.',sticker:'Движ = кайф',color:'#f2e7ef'},
+ {tag:'Самочувствие',emoji:'❤️',title:'Самочувствие важнее рекорда.',body:'Прислушивайся к уровню энергии и восстановлению. Забота о себе не сводится к весам.',sticker:'Береги себя',color:'#f6e5e4'},
+ {tag:'Привычка',emoji:'📆',title:'Новый день — новая возможность.',body:'Пропущенная запись ничего не отменяет. Просто продолжай с сегодняшнего дня.',sticker:'Продолжаем!',color:'#e6f1e3'},
+ {tag:'С улыбкой',emoji:'🥇',title:'Медаль за последовательность.',body:'Не за идеальное меню и не за тысячу приседаний. За то, что возвращаешься к хорошим привычкам.',sticker:'Твоя медаль',color:'#f7efcc'},
+ {tag:'Движение',emoji:'🪜',title:'Лестница или лифт?',body:'Если удобно и по силам, выбери немного движения по пути. Маленькие решения тоже имеют значение.',sticker:'Бонусные шаги',color:'#e0eee8'}
+];
+let teloMotivationWasHiddenAt=null;
+function teloCloseMotivation(){const overlay=document.getElementById('telo-motivation');if(!overlay)return;overlay.remove();document.body.style.overflow=overlay.dataset.previousOverflow||'';}
+function teloShowMotivation(){
+ if(!state || document.getElementById('telo-motivation') || document.getElementById('porcia-camera-overlay') || document.getElementById('editor')?.open || document.hidden)return;
+ const storageKey='telo-motivation-sequence-v1';let previous=-1;
+ try{const raw=localStorage.getItem(storageKey);if(raw!==null&&/^\d+$/.test(raw))previous=Number(raw)}catch{}
+ const next=previous<0?Math.floor(Math.random()*TELO_MOTIVATIONS.length):(previous+1)%TELO_MOTIVATIONS.length;
+ try{localStorage.setItem(storageKey,String(next));}catch{}
+ const entry=TELO_MOTIVATIONS[next];const count=state.entries.filter(e=>e.date===N.dateKey()).length;
+ const context=count>0?`Сегодня уже ${count} ${count%10===1&&count%100!==11?'запись':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'записи':'записей'} о питании. Маленькие шаги складываются!`:'Сегодняшний дневник пока пуст. Можно начать с одного приёма пищи.';
+ const overlay=document.createElement('div');overlay.id='telo-motivation';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','telo-motivation-title');overlay.dataset.previousOverflow=document.body.style.overflow;
+ overlay.innerHTML=`<div class="tm-panel" style="--tm-glow:${entry.color}"><div class="tm-top"><span class="tm-eyebrow">ТЕЛО 2.0 · ТВОЙ РИТМ</span><button class="tm-dismiss" type="button" aria-label="Закрыть приветствие">×</button></div><div class="tm-art" aria-hidden="true"><span class="tm-emoji">${entry.emoji}</span><span class="tm-sticker">${entry.sticker}</span></div><span class="tm-category">${entry.tag}</span><h2 id="telo-motivation-title">${entry.title}</h2><p class="tm-message">${entry.body}</p><p class="tm-context">${context}</p><div class="tm-actions"><button class="tm-action tm-action-main" type="button" data-motivation="add">＋ Записать еду</button><button class="tm-action tm-action-secondary" type="button" data-motivation="diary">К дневнику →</button></div><p class="tm-footer">Один день — одна небольшая победа 🌿</p></div>`;
+ overlay.querySelector('.tm-dismiss').addEventListener('click',teloCloseMotivation);
+ overlay.querySelector('[data-motivation="diary"]').addEventListener('click',()=>{teloCloseMotivation();location.hash='diary';render();});
+ overlay.querySelector('[data-motivation="add"]').addEventListener('click',()=>{teloCloseMotivation();currentDate=N.dateKey();location.hash='diary';render();openEntry(null,null,'Перекус');});
+ overlay.addEventListener('click',event=>{if(event.target===overlay)teloCloseMotivation();});
+ overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();teloCloseMotivation();}});
+ document.body.append(overlay);document.body.style.overflow='hidden';overlay.querySelector('.tm-dismiss').focus({preventScroll:true});
+}
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden){teloMotivationWasHiddenAt=Date.now();return;}
+ if(teloMotivationWasHiddenAt!==null&&Date.now()-teloMotivationWasHiddenAt>=120000){teloMotivationWasHiddenAt=null;setTimeout(teloShowMotivation,350);}
+});
+window.addEventListener('pagehide',()=>{teloMotivationWasHiddenAt=Date.now();});
+window.addEventListener('pageshow',event=>{if(event.persisted&&teloMotivationWasHiddenAt!==null&&Date.now()-teloMotivationWasHiddenAt>=120000){teloMotivationWasHiddenAt=null;setTimeout(teloShowMotivation,350);}});
+async function init(){try{db=await openDB();const saved=await readState();state=saved?N.validate(saved):N.initial();if(!saved)await writeState(state);render();requestAnimationFrame(teloShowMotivation);}catch(ex){warn('Не удалось открыть дневник: '+ex.message);$('#screen').innerHTML='<div class="empty"><h2>Дневник не открыт</h2><p>Существующие файлы не изменены. Закрой окно и попробуй запустить «Тело 2.0» снова.</p></div>';}}
 init();
 </script><noscript>JavaScript недоступен. Для работы включи JavaScript в Safari.</noscript></body></html>
