@@ -1,4 +1,4 @@
-const CACHE='telo-pwa-v2.0.2';
+const CACHE='telo-pwa-v2.0.3';
 const CORE=['./','./index.html','./pwa-bridge.js','./vendor/zxing.min.js','./manifest.webmanifest','./icon-192.png','./icon-512.svg','./favicon.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
