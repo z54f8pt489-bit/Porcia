@@ -117,7 +117,7 @@
     for(const u of urlsFor(path))try{data=await fetchJSON(u);break;}catch(e){err=e;}
     if(!data)throw Error('Интернет-база недоступна: '+(err?.message||'нет ответа'));
     const codes=new Set(), results=[];
-    for(const p of data.products||[]){const f=product(p);if(!f||codes.has(f.code))continue;codes.add(f.code);results.push(f);}
+    for(const p of data.products||[]){const f=product(p,true);if(!f||codes.has(f.code)||[f.kcal,f.protein,f.fat,f.carbs].every(v=>v===null))continue;codes.add(f.code);results.push(f);}
     results.sort((a,b)=>Number(b.russian)-Number(a.russian));return results.slice(0,24);
   }
   async function exportFile(p){
