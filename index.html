@@ -102,7 +102,7 @@ window.porciaCall=(action,payload={})=>new Promise((resolve,reject)=>{
 });
 window.__porciaReceive=msg=>{const p=pending.get(msg.id);if(!p)return;pending.delete(msg.id);if(msg.ok)p.resolve(msg.value);else p.reject(Error(msg.error||'Не удалось выполнить действие'));};
 })();
-</script><script src="vendor/zxing.min.js"></script><script src="pwa-bridge.js"></script><script>(function(root){
+</script><script src="vendor/zxing.min.js"></script><script src="pwa-bridge.js"></script><script src="motivation-bank.js"></script><script>(function(root){
 'use strict';
 const KEYS=['kcal','protein','fat','carbs'];
 const dateKey=(date=new Date())=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
@@ -770,19 +770,53 @@ const TELO_MOTIVATIONS=[
  {tag:'Привычка',emoji:'📆',title:'Новый день — новая возможность.',body:'Пропущенная запись ничего не отменяет. Просто продолжай с сегодняшнего дня.',sticker:'Продолжаем!',color:'#e6f1e3'},
  {tag:'С улыбкой',emoji:'🥇',title:'Медаль за последовательность.',body:'Не за идеальное меню и не за тысячу приседаний. За то, что возвращаешься к хорошим привычкам.',sticker:'Твоя медаль',color:'#f7efcc'},
  {tag:'Движение',emoji:'🪜',title:'Лестница или лифт?',body:'Если удобно и по силам, выбери немного движения по пути. Маленькие решения тоже имеют значение.',sticker:'Бонусные шаги',color:'#e0eee8'}
+, ...(Array.isArray(window.TELO_MOTIVATION_EXTRA)?window.TELO_MOTIVATION_EXTRA:[])
 ];
 let teloMotivationWasHiddenAt=null;
+// No repeats until the whole catalogue has appeared; shuffle stays on this iPhone.
+function teloNextMotivation(){
+ const total=TELO_MOTIVATIONS.length;
+ const key='telo-motivation-shuffle-v2';
+ let saved=null;
+ try{saved=JSON.parse(localStorage.getItem(key)||'null');}catch{}
+ const valid=saved&&Array.isArray(saved.order)&&saved.order.length===total&&
+   Number.isInteger(saved.position)&&saved.position>=0&&saved.position<=total&&
+   saved.order.every(i=>Number.isInteger(i)&&i>=0&&i<total)&&
+   new Set(saved.order).size===total;
+ let order=valid?saved.order:null,position=valid?saved.position:0;
+ const last=Number.isInteger(saved?.last)?saved.last:-1;
+ if(!order||position>=total){
+   order=Array.from({length:total},(_,i)=>i);
+   for(let i=total-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+   // Keep neighboring cards from the same theme apart, where possible.
+   for(let i=1;i<total;i++){
+     const prevTag=TELO_MOTIVATIONS[order[i-1]].tag;
+     if(TELO_MOTIVATIONS[order[i]].tag===prevTag){
+       for(let j=i+1;j<total;j++){
+         if(TELO_MOTIVATIONS[order[j]].tag!==prevTag&&
+            (j===total-1||TELO_MOTIVATIONS[order[i]].tag!==TELO_MOTIVATIONS[order[j+1]].tag)){
+           [order[i],order[j]]=[order[j],order[i]];break;
+         }
+       }
+     }
+   }
+   if(total>1&&(order[0]===last||TELO_MOTIVATIONS[order[0]].tag===TELO_MOTIVATIONS[last]?.tag)){
+     const swap=order.findIndex((idx,i)=>i>0&&idx!==last&&TELO_MOTIVATIONS[idx].tag!==TELO_MOTIVATIONS[last]?.tag&&TELO_MOTIVATIONS[idx].tag!==TELO_MOTIVATIONS[order[1]].tag);
+     if(swap>0)[order[0],order[swap]]=[order[swap],order[0]];
+   }
+   position=0;
+ }
+ const index=order[position++];
+ try{localStorage.setItem(key,JSON.stringify({order,position,last:index}));}catch{}
+ return TELO_MOTIVATIONS[index];
+}
 function teloCloseMotivation(){const overlay=document.getElementById('telo-motivation');if(!overlay)return;overlay.remove();document.body.style.overflow=overlay.dataset.previousOverflow||'';}
 function teloShowMotivation(){
  if(!state || document.getElementById('telo-motivation') || document.getElementById('porcia-camera-overlay') || document.getElementById('editor')?.open || document.hidden)return;
- const storageKey='telo-motivation-sequence-v1';let previous=-1;
- try{const raw=localStorage.getItem(storageKey);if(raw!==null&&/^\d+$/.test(raw))previous=Number(raw)}catch{}
- const next=previous<0?Math.floor(Math.random()*TELO_MOTIVATIONS.length):(previous+1)%TELO_MOTIVATIONS.length;
- try{localStorage.setItem(storageKey,String(next));}catch{}
- const entry=TELO_MOTIVATIONS[next];const count=state.entries.filter(e=>e.date===N.dateKey()).length;
+ const entry=teloNextMotivation();const count=state.entries.filter(e=>e.date===N.dateKey()).length;
  const context=count>0?`Сегодня уже ${count} ${count%10===1&&count%100!==11?'запись':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'записи':'записей'} о питании. Маленькие шаги складываются!`:'Сегодняшний дневник пока пуст. Можно начать с одного приёма пищи.';
  const overlay=document.createElement('div');overlay.id='telo-motivation';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','telo-motivation-title');overlay.dataset.previousOverflow=document.body.style.overflow;
- overlay.innerHTML=`<div class="tm-panel" style="--tm-glow:${entry.color}"><div class="tm-top"><span class="tm-eyebrow">ТЕЛО 2.0 · ТВОЙ РИТМ</span><button class="tm-dismiss" type="button" aria-label="Закрыть приветствие">×</button></div><div class="tm-art" aria-hidden="true"><span class="tm-emoji">${entry.emoji}</span><span class="tm-sticker">${entry.sticker}</span></div><span class="tm-category">${entry.tag}</span><h2 id="telo-motivation-title">${entry.title}</h2><p class="tm-message">${entry.body}</p><p class="tm-context">${context}</p><div class="tm-actions"><button class="tm-action tm-action-main" type="button" data-motivation="add">＋ Записать еду</button><button class="tm-action tm-action-secondary" type="button" data-motivation="diary">К дневнику →</button></div><p class="tm-footer">Один день — одна небольшая победа 🌿</p></div>`;
+ overlay.innerHTML=`<div class="tm-panel" style="--tm-glow:${entry.color}"><div class="tm-top"><span class="tm-eyebrow">ТЕЛО 2.0 · 1030 МОТИВАЦИЙ</span><button class="tm-dismiss" type="button" aria-label="Закрыть приветствие">×</button></div><div class="tm-art" aria-hidden="true"><span class="tm-emoji">${entry.emoji}</span><span class="tm-sticker">${entry.sticker}</span></div><span class="tm-category">${entry.tag}</span><h2 id="telo-motivation-title">${entry.title}</h2><p class="tm-message">${entry.body}</p><p class="tm-context">${context}</p><div class="tm-actions"><button class="tm-action tm-action-main" type="button" data-motivation="add">＋ Записать еду</button><button class="tm-action tm-action-secondary" type="button" data-motivation="diary">К дневнику →</button></div><p class="tm-footer">Один день — одна небольшая победа 🌿</p></div>`;
  overlay.querySelector('.tm-dismiss').addEventListener('click',teloCloseMotivation);
  overlay.querySelector('[data-motivation="diary"]').addEventListener('click',()=>{teloCloseMotivation();location.hash='diary';render();});
  overlay.querySelector('[data-motivation="add"]').addEventListener('click',()=>{teloCloseMotivation();currentDate=N.dateKey();location.hash='diary';render();openEntry(null,null,'Перекус');});
