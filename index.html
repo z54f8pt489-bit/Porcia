@@ -38,10 +38,16 @@
 #porcia-camera-overlay h2{font-size:23px;color:#fff;margin:0;line-height:1.3}
 #porcia-camera-overlay button{font-size:17px;min-height:46px;cursor:pointer;border-radius:12px;padding:9px 14px}
 #porcia-camera-overlay .close-camera{background:#33413c;border:1px solid #506159;color:#fff}
-#porcia-camera-overlay .camera-viewport{position:relative;min-height:270px;max-height:55vh;border-radius:18px;background:#020303;overflow:hidden;display:flex;align-items:center;justify-content:center}
-#porcia-camera-overlay video{display:block;object-fit:cover;width:100%;height:100%;min-height:270px;max-height:55vh;background:#090b0a}
-#porcia-camera-overlay .camera-guide{position:absolute;left:9%;right:9%;top:40%;height:21%;border:2px solid #b0eece;border-radius:10px;pointer-events:none;box-shadow:0 0 0 400px #0002}
-#porcia-camera-overlay .camera-guide:after{content:'';height:2px;background:#d5f7d2;position:absolute;left:6%;right:6%;top:50%;opacity:.85}
+#porcia-camera-overlay .camera-viewport{position:relative;height:min(60vh,540px);min-height:310px;border-radius:18px;background:#050909;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#porcia-camera-overlay video{display:block;object-fit:contain;width:100%;height:100%;background:#050909}
+#porcia-camera-overlay .camera-guide{position:absolute;left:4%;right:4%;top:5%;bottom:5%;pointer-events:none;border:0;border-radius:18px;box-shadow:inset 0 0 0 2px #a8e7ba88}
+#porcia-camera-overlay .camera-guide:after{display:none}
+#porcia-camera-overlay .camera-active-tag{position:absolute;left:12px;right:12px;bottom:12px;border-radius:10px;padding:8px 10px;text-align:center;background:#071a16ba;color:#d7f6df;font-size:12px;pointer-events:none}
+#porcia-camera-overlay .camera-tools{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:12px 0 2px}
+#porcia-camera-overlay .camera-tools[hidden],#porcia-camera-overlay .camera-tools [hidden]{display:none!important}
+#porcia-camera-overlay .camera-tools button{border:1px solid #648675;background:#2d4738;color:#fff;min-height:40px;font-size:14px}
+#porcia-camera-overlay .camera-tools label{display:flex;flex:1;align-items:center;gap:8px;font-size:14px}
+#porcia-camera-overlay .camera-tools input{flex:1;min-width:80px;accent-color:#c9e4a8}
 #porcia-camera-overlay .camera-status{font-size:16px;line-height:1.5;color:#e0eee7;margin:16px 0 12px}
 #porcia-camera-overlay .camera-hint{font-size:14px;line-height:1.5;color:#b6c6be;margin:0 0 18px}
 #porcia-camera-overlay .camera-fallback{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -280,149 +286,163 @@ function startCameraScanner(){
  return new Promise(resolve=>{
   const overlay=document.createElement('div');overlay.id='porcia-camera-overlay';
   overlay.innerHTML=`<header><h2>Сканировать штрихкод</h2><button class="close-camera" type="button" id="camera-cancel">Закрыть</button></header>
-    <div class="camera-viewport"><video id="porcia-live-video" autoplay playsinline muted></video><div class="camera-guide"></div></div>
-    <p id="camera-status" class="camera-status" role="status">Запрашиваю доступ к камере…</p>
-    <p class="camera-hint">Наведи заднюю камеру на полосы штрихкода и держи телефон неподвижно. Поддерживаются EAN-13 и EAN-8. Сканирование выполняется автоматически. Фотографировать не нужно.</p>
-    <form id="camera-manual" class="camera-fallback"><input inputmode="numeric" pattern="[0-9]{8,14}" maxlength="14" placeholder="Или введи номер"><button type="submit">Найти</button></form>`;
+   <div class="camera-viewport"><video id="porcia-live-video" autoplay playsinline muted></video><div class="camera-guide" aria-hidden="true"></div><div class="camera-active-tag">Ищу штрихкод по всему изображению</div></div>
+   <div id="camera-tools" class="camera-tools" hidden><button type="button" id="camera-torch" hidden>Фонарик</button><label id="camera-zoom-label" hidden>Масштаб <input id="camera-zoom" type="range" min="1" max="3" step="0.1" value="1" aria-label="Приближение камеры"></label></div>
+   <p id="camera-status" class="camera-status" role="status" aria-live="polite">Запрашиваю доступ к камере…</p>
+   <p class="camera-hint">Не нужно попадать в рамку. Просто покажи штрихкод камере, чтобы полоски были чёткими и без бликов.</p>
+   <form id="camera-manual" class="camera-fallback"><input inputmode="numeric" pattern="[0-9]{8,14}" maxlength="14" placeholder="Или введи номер"><button type="submit">Найти</button></form>`;
   document.body.appendChild(overlay);
   const video=overlay.querySelector('#porcia-live-video'),status=overlay.querySelector('#camera-status');
-  const cvs=document.createElement('canvas');const ctx=cvs.getContext('2d',{willReadFrequently:true});
-  let stream=null,tick=null,closed=false,misses=0,reader=null,quietTimer=null,decodeErrors=0;
-  let nativeDetector=null;
-  try{if(window.BarcodeDetector)nativeDetector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});}catch{}
-  function startZXing(){
-    if(!window.ZXing?.BrowserMultiFormatReader)return false;
-    try{
-      const hints=new Map();
-      hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A]);
-      hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
-      reader=new ZXing.BrowserMultiFormatReader(hints,200);
-      return true;
-    }catch(error){
-      console.warn('Не удалось запустить ZXing:',error);
-      reader=null;
-      return false;
-    }
+  const cvs=document.createElement('canvas'),ctx=cvs.getContext('2d',{willReadFrequently:true});
+  let stream=null,track=null,tick=null,closed=false,reader=null,nativeDetector=null;
+  let frame=0,hardErrors=0,torchOn=false,quietTimer=null,lastStatus='';
+  function info(message,important=false){
+   if(closed)return;
+   if(message!==lastStatus){status.textContent=message;lastStatus=message;}
+   if(important)status.classList.add('camera-error');
   }
-  function stop(value){
-    if(closed)return;closed=true;
-    if(tick!==null)clearTimeout(tick);
-    if(quietTimer!==null)clearTimeout(quietTimer);
-    try{reader?.reset();}catch{}
-    if(stream)for(const track of stream.getTracks())track.stop();
-    video.pause();video.srcObject=null;overlay.remove();resolve(value||null);
+  function finish(code){
+   if(closed)return;closed=true;
+   if(tick!==null)clearTimeout(tick);
+   if(quietTimer!==null)clearTimeout(quietTimer);
+   try{reader?.reset();}catch{}
+   try{stream?.getTracks().forEach(t=>t.stop());}catch{}
+   try{video.pause();video.srcObject=null;}catch{}
+   overlay.remove();resolve(code||null);
   }
-  overlay.querySelector('#camera-cancel').addEventListener('click',()=>stop(null));
-  overlay.querySelector('#camera-manual').addEventListener('submit',e=>{
-    e.preventDefault();const code=e.currentTarget.querySelector('input').value.trim();
-    if(!PorciaEAN.check(code)){status.textContent='Проверь цифры: неверная длина или контрольная цифра штрихкода.';status.classList.add('camera-error');return;}
-    stop(code);
+  overlay.querySelector('#camera-cancel').addEventListener('click',()=>finish(null));
+  overlay.querySelector('#camera-manual').addEventListener('submit',event=>{
+   event.preventDefault();const code=event.currentTarget.querySelector('input').value.trim();
+   if(!PorciaEAN.check(code)){info('Проверь цифры или контрольную цифру штрихкода.',true);return;}
+   finish(code);
   });
-  function grayScan(pixels,w,h,isVertical){
-    const length=isVertical?h:w;const lines=isVertical?w:h;
-    if(length<170)return null;
-    const rows=[.5,.48,.52,.45,.55,.42,.58,.37,.63,.32,.68,.25,.75,.2,.8];
-    for(const fr of rows){
-      const line=Math.min(lines-2,Math.max(1,Math.floor(lines*fr)));
-      const gr=new Uint8Array(length);
-      for(let i=0;i<length;i++){
-        const pix=isVertical?4*(i*w+line):4*(line*w+i);
-        const lum=0.299*pixels[pix]+0.587*pixels[pix+1]+0.114*pixels[pix+2];
-        gr[i]=lum;
-      }
-      const code=PorciaEAN.tryRow(gr);
-      if(code)return code;
-      // Reflect for upside-down packaging: inverse reading direction.
-      gr.reverse();const flipped=PorciaEAN.tryRow(gr);if(flipped)return flipped;
-    }
-    return null;
+  function setupHardwareControls(){
+   if(!track?.getCapabilities)return;
+   let caps={};try{caps=track.getCapabilities()||{};}catch{return;}
+   const bar=overlay.querySelector('#camera-tools');
+   if(caps.torch){
+    const button=overlay.querySelector('#camera-torch');button.hidden=false;bar.hidden=false;
+    button.addEventListener('click',async()=>{
+     try{const next=!torchOn;await track.applyConstraints({advanced:[{torch:next}]});torchOn=next;button.textContent=next?'Выключить фонарик':'Включить фонарик';}
+     catch{button.hidden=true;if(overlay.querySelector('#camera-zoom-label').hidden)bar.hidden=true;}
+    });
+   }
+   if(caps.zoom&&Number.isFinite(caps.zoom.min)&&Number.isFinite(caps.zoom.max)&&caps.zoom.max>caps.zoom.min){
+    const label=overlay.querySelector('#camera-zoom-label'),range=overlay.querySelector('#camera-zoom');
+    range.min=String(caps.zoom.min);range.max=String(Math.min(caps.zoom.max,5));range.step=String(caps.zoom.step||.1);
+    range.value=String(Math.max(caps.zoom.min,Math.min(caps.zoom.max,1.3)));
+    label.hidden=false;bar.hidden=false;
+    range.addEventListener('input',()=>{track.applyConstraints({advanced:[{zoom:Number(range.value)}]}).catch(()=>{label.hidden=true;});});
+   }
+   // Focus mode can be set only when supported; most iPhone Safari versions handle focus automatically.
+   if(Array.isArray(caps.focusMode)&&caps.focusMode.includes('continuous')){
+    track.applyConstraints({advanced:[{focusMode:'continuous'}]}).catch(()=>{});
+   }
   }
-  async function scanFrame(){
-    if(closed)return;
-    try{
-      if(video.readyState>=2 && video.videoWidth>=200){
-        let code=null;
-        // Native detector where supported (mostly Chromium). Safari typically has no BarcodeDetector.
-        if(nativeDetector){
-          try{
-            const scale=Math.min(1,1280/video.videoWidth,1280/video.videoHeight);
-            const w=Math.round(video.videoWidth*scale),h=Math.round(video.videoHeight*scale);
-            if(cvs.width!==w||cvs.height!==h){cvs.width=w;cvs.height=h;}
-            ctx.drawImage(video,0,0,w,h);
-            for(const item of await nativeDetector.detect(cvs)){
-              if(PorciaEAN.check(item.rawValue)){code=item.rawValue;break;}
-            }
-          }catch(error){console.warn('BarcodeDetector:',error);nativeDetector=null;}
-        }
-        if(!code && reader){
-          try{
-            // Synchronous decoding of an already playing video frame avoids Safari's
-            // missed `playing` event and begins immediately, not after a new play call.
-            const result=reader.decode(video);
-            const value=String(result?.getText?.()||result?.text||'').trim();
-            if(PorciaEAN.check(value))code=value;
-            decodeErrors=0;
-          }catch(error){
-            if(!['NotFoundException','ChecksumException','FormatException'].includes(error?.name)){
-              if(++decodeErrors>=3){
-                console.warn('ZXing stopped working. Trying simple decoder:',error);
-                try{reader.reset();}catch{}
-                reader=null;
-                status.textContent='Основной сканер недоступен — включён резервный режим.';
-              }
-            }
-          }
-        }
-        // The lightweight EAN reader remains a fallback even if ZXing has no match.
-        // Limit it to occasional frames to avoid freezing older iPhones.
-        if(!code && (!reader||misses%3===0)){
-          const scale=Math.min(1,1280/video.videoWidth,1280/video.videoHeight);
-          const w=Math.max(1,Math.floor(video.videoWidth*scale)),h=Math.max(1,Math.floor(video.videoHeight*scale));
-          if(cvs.width!==w||cvs.height!==h){cvs.width=w;cvs.height=h;}
-          ctx.drawImage(video,0,0,w,h);
-          const pixels=ctx.getImageData(0,0,w,h).data;
-          code=grayScan(pixels,w,h,false)||(misses%3===0?grayScan(pixels,w,h,true):null);
-        }
-        if(code){
-          status.textContent='Код считан: '+code+'. Открываю товар…';
-          stop(code);
-          return;
-        }
-        misses++;
-        if(misses===8)status.textContent='Сканирую изображение. Поднеси штрихкод ближе к центру и дождись чёткого фокуса.';
-      }
-    }catch(error){
-      console.warn('Ошибка обработки видеокадра:',error);
-      // Never silently stall: keep the camera open, show an actionable error.
-      status.textContent='Сканер не смог обработать кадр: '+String(error?.message||error)+'. Можно ввести цифры ниже.';
-      status.classList.add('camera-error');
+  function capture(mode){
+   const W=video.videoWidth,H=video.videoHeight;
+   const rotated=mode===5||mode===6;
+   let sx=0,sy=0,sw=W,sh=H;
+   if(mode===1){sx=W*.16;sy=H*.14;sw=W*.68;sh=H*.72;}
+   else if(mode===2){sx=W*.00;sy=H*.12;sw=W*.73;sh=H*.76;}
+   else if(mode===3){sx=W*.27;sy=H*.12;sw=W*.73;sh=H*.76;}
+   else if(mode===4){sx=W*.10;sy=H*.02;sw=W*.80;sh=H*.96;}
+   // Keep higher source resolution for distant codes; avoid huge canvas processing on old iPhones.
+   const maxSize=mode===0?1500:1400,scale=Math.min(1,maxSize/Math.max(sw,sh));
+   const w=Math.max(1,Math.floor(sw*scale)),h=Math.max(1,Math.floor(sh*scale));
+   const cw=rotated?h:w,ch=rotated?w:h;
+   if(cvs.width!==cw||cvs.height!==ch){cvs.width=cw;cvs.height=ch;}
+   ctx.save();
+   if(rotated){ctx.translate(cw/2,ch/2);ctx.rotate(mode===5?Math.PI/2:-Math.PI/2);ctx.drawImage(video,sx,sy,sw,sh,-w/2,-h/2,w,h);}
+   else ctx.drawImage(video,sx,sy,sw,sh,0,0,w,h);
+   ctx.restore();return {w:cw,h:ch};
+  }
+  function grayScan(pixels,w,h,vertical){
+   const length=vertical?h:w,lines=vertical?w:h;
+   if(length<160)return null;
+   const positions=[.5,.35,.65,.20,.80,.42,.58,.28,.72,.12,.88,.05,.95,.47,.53,.1,.9,.25,.75,.40,.60,.3,.7,.15,.85];
+   for(const part of positions){
+    const line=Math.min(lines-2,Math.max(1,Math.floor(lines*part)));
+    const vals=new Uint8Array(length);
+    for(let i=0;i<length;i++){
+     const p=4*(vertical?(i*w+line):(line*w+i));
+     vals[i]=(pixels[p]*77+pixels[p+1]*150+pixels[p+2]*29)>>8;
     }
-    if(!closed)tick=setTimeout(scanFrame,330);
+    const direct=PorciaEAN.tryRow(vals);if(direct)return direct;
+    vals.reverse();const inverse=PorciaEAN.tryRow(vals);if(inverse)return inverse;
+   }
+   return null;
+  }
+  async function decodeFrame(){
+   if(closed||video.readyState<2||video.videoWidth<200)return null;
+   const n=frame++;
+   // Native OS decoder is fastest on browsers that implement BarcodeDetector.
+   if(nativeDetector){
+    try{const results=await nativeDetector.detect(video);if(closed)return null;
+     for(const item of results){const c=String(item.rawValue||'').trim();if(PorciaEAN.check(c))return c;}
+    }catch(ex){console.warn('BarcodeDetector недоступен',ex);nativeDetector=null;}
+   }
+   // Alternate full image with overlapping zoomed regions: no precise aiming required.
+   // A distant barcode is easier to decode when its source pixels fill the crop.
+   const modes=[0,1,0,2,0,3,0,4,5,0,1,6,0,2,0,3];
+   const mode=modes[n%modes.length];
+   const {w,h}=capture(mode);
+   const raw=(reader||n%2===0)?ctx.getImageData(0,0,w,h).data:null;
+   if(reader){
+    try{
+     // Use the documented *core* ZXing API. BrowserMultiFormatReader.decode(canvas)
+     // is not a supported frame-decoding call and was a source of missed scans.
+     const gray=new Uint8ClampedArray(w*h);
+     for(let i=0,j=0;i<raw.length;i+=4,j++)gray[j]=(raw[i]*77+raw[i+1]*150+raw[i+2]*29)>>8;
+     const source=new ZXing.RGBLuminanceSource(gray,w,h);
+     const bitmap=new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(source));
+     const result=reader.decodeWithState(bitmap);
+     const code=String(result?.getText?.()||result?.text||'').trim();
+     if(PorciaEAN.check(code))return code;
+     hardErrors=0;
+    }catch(ex){
+     const kind=String(ex?.name||ex?.constructor?.name||'');
+     if(!/NotFound|Checksum|Format|ReaderException/.test(kind)){
+      if(++hardErrors>=4){console.warn('ZXing недоступен, резервный декодер:',ex);reader=null;info('Использую резервное распознавание. Покажи полоски крупнее.');}
+     }
+    }
+   }
+   // Independently scan the same frame for standard EAN bars, including rotated barcodes.
+   if(!reader||n%2===0){
+    const pixels=raw||ctx.getImageData(0,0,w,h).data;
+    return grayScan(pixels,w,h,false)||grayScan(pixels,w,h,true);
+   }
+   return null;
+  }
+  async function loop(){
+   if(closed)return;
+   try{
+    const code=await decodeFrame();
+    if(closed)return;
+    if(code){info('Штрихкод найден: '+code+' · Открываю продукт…');finish(code);return;}
+    if(frame===14)info('Ищу по всему изображению. Можно немного приблизить упаковку.');
+    if(frame===40)info('Не распознал. Попробуй убрать блики или слегка отодвинуть камеру.');
+   }catch(ex){
+    console.warn('Ошибка сканирования:',ex);
+    info('Не удалось обработать кадр. Попробуй ввести номер под штрихкодом.',true);
+   }
+   if(!closed)tick=setTimeout(loop,130);
   }
   async function start(){
-    if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      status.textContent='Камера недоступна. Открой «Тело 2.0» с установленного значка через Safari по HTTPS и разреши доступ к камере. Или введи цифры ниже.';
-      status.classList.add('camera-error');return;
+   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){info('Открой «Тело 2.0» по HTTPS в Safari и разреши камеру. Или введи цифры ниже.',true);return;}
+   try{
+    stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080},frameRate:{ideal:30}}});
+    if(closed){stream.getTracks().forEach(x=>x.stop());return;}
+    track=stream.getVideoTracks()[0];video.srcObject=stream;await video.play();
+    if(closed)return;
+    setupHardwareControls();
+    if(window.BarcodeDetector){try{nativeDetector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a']});}catch{}}
+    if(window.ZXing?.MultiFormatReader&&ZXing.RGBLuminanceSource&&ZXing.HybridBinarizer&&ZXing.BinaryBitmap){
+     try{const hints=new Map();hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A]);hints.set(ZXing.DecodeHintType.TRY_HARDER,true);reader=new ZXing.MultiFormatReader();reader.setHints(hints);}catch(ex){console.warn('ZXing:',ex);reader=null;}
     }
-    try{
-      stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});
-      if(closed){stream.getTracks().forEach(t=>t.stop());return;}
-      video.srcObject=stream;await video.play();
-      if(closed)return;
-      status.textContent='Камера включена. Распознаю штрихкод…';
-      const usingZXing=startZXing();
-      status.textContent=usingZXing?'Камера включена. Обрабатываю кадры ZXing…':'Камера включена. Использую резервное распознавание EAN.';
-      tick=setTimeout(scanFrame,180);
-      // Clear user feedback if recognition takes too long, without falsely claiming a scan succeeded.
-      quietTimer=setTimeout(()=>{
-        if(!closed)status.textContent='Камера работает, но код пока не распознан. Держи полоски прямо, крупно и без бликов; чуть отодвинь телефон, чтобы камера сфокусировалась.';
-      },9000);
-    }catch(e){
-      if(closed)return;
-      const reason=String(e?.name||'')+' '+String(e?.message||e);
-      status.textContent='Камера не открылась: '+reason+'. Проверь разрешение камеры в Safari: настройки сайта → Камера → Разрешить. Сейчас доступен ручной ввод номера.';
-      status.classList.add('camera-error');
-    }
+    info('Ищу штрихкод по всему изображению. Не нужно точно наводить.');
+    tick=setTimeout(loop,120);
+   }catch(ex){if(closed)return;info('Камера не открылась: '+String(ex?.message||ex)+'. Проверь доступ к камере или введи номер.',true);}
   }
   start();
  });
@@ -543,7 +563,7 @@ function openWeight(date=null){
 function openWeightGoal(){const v=state.goals.weight;showDialog('Целевой вес',`<form id="weight-goal-form"><label class="field"><span>Моя цель, кг</span><input type="text" name="weight" inputmode="decimal" placeholder="Например, 75,3" value="${Number.isFinite(v)?fmt(v,2):''}"></label><p class="micro">Если оставить поле пустым, цель не будет отображаться.</p><p class="error" role="alert"></p><div class="form-actions"><button type="submit" class="primary">Сохранить цель</button></div></form>`);}
 
 function historyView(){const today=N.dateKey(),from=N.shiftDate(today,-6),st=N.stats(state,from,today),dates=[...new Set([...state.entries.map(e=>e.date),...Object.keys(state.days)])].sort().reverse(),week=Array.from({length:7},(_,i)=>N.shiftDate(from,i)),max=Math.max(state.goals.kcal,...week.map(d=>N.total(dayEntries(d)).kcal));return `<div class="title-row"><div><h1>Твоя история</h1><p class="subtitle">Последние 7 дней · ${st.count} полностью заполненных</p></div></div><div class="stats-grid">${[['kcal','Ккал в среднем'],['protein','Белки, г в среднем'],['fat','Жиры, г в среднем']].map(([k,l])=>`<div class="stat"><strong>${st.count?fmt(st.average[k]):'—'}</strong><span>${l}</span></div>`).join('')}</div><div class="small-card"><h3>Записанные калории</h3><div class="week-chart">${week.map(d=>{const e=dayEntries(d),t=N.total(e),full=dayInfo(d).complete;return `<div class="chart-col"><span>${e.length?fmt(t.kcal):'—'}</span><div class="chart-bar ${full?'':'partial'}" style="height:${e.length?Math.max(2,t.kcal/max*95):2}px" title="${dateLong(d)}: ${e.length?t.kcal+' ккал':'нет записей'}"></div><span>${d.slice(8)}.${d.slice(5,7)}</span></div>`;}).join('')}</div><p class="micro">Штриховка — неполный день. Пропуски не считаются нулевым питанием.</p></div><div class="section-head"><h2>Все записи</h2></div><div class="history-list">${dates.map(d=>{const e=dayEntries(d),t=N.total(e);return `<button class="history-row" data-action="open-day" data-date="${d}"><div><strong>${dateLong(d)}</strong><span>${dayInfo(d).complete?'Вся еда записана':'Неполный день'}${e.some(x=>x.estimated)?' · есть оценки':''}</span></div><div class="right"><strong>${e.length?fmt(t.kcal)+' ккал':'Только вода'}</strong><span>Б ${fmt(t.protein)} · Ж ${fmt(t.fat)} · У ${fmt(t.carbs)}</span></div></button>`;}).join('')||'<div class="empty">История появится после первой записи.</div>'}</div>`;}
-function settingsView(){return `<div class="title-row"><div><h1>Настройки</h1><p class="subtitle">Цели, сканер и сохранность дневника.</p></div></div><div class="settings-grid"><section class="small-card"><p class="micro">Версия: <strong>Тело 2.0.1</strong> · обновлено без сброса данных. База продуктов и история находятся на этом устройстве.</p></section><section class="small-card"><h2>Дневные ориентиры</h2><form id="goal-form"><label class="field"><span>Калории, ккал</span><input name="kcal" type="number" min="1" max="10000" step="1" value="${state.goals.kcal}" required></label><div class="form-grid"><label class="field"><span>Белок, минимум г</span><input name="protein" type="number" min="0" max="1000" step="1" value="${state.goals.protein}" required></label><label class="field"><span>Жиры, минимум г</span><input name="fat" type="number" min="0" max="1000" step="1" value="${state.goals.fat}" required></label></div><div class="form-grid"><label class="field"><span>Углеводы, г (необязательно)</span><input name="carbs" inputmode="decimal" type="text" placeholder="Без цели" value="${state.goals.carbs??''}"></label><label class="field"><span>Целевой вес, кг (необязательно)</span><input name="weight" inputmode="decimal" type="text" placeholder="Например, 75,3" value="${state.goals.weight??''}"></label></div><p class="micro" style="margin-bottom:15px">Ориентиры применяются ко всем дням. Средние значения за неполные дни не учитываются.</p><button class="primary" type="submit">Сохранить цели</button></form></section><section class="small-card"><h2>Сканирование продуктов</h2><p class="note">Кнопка «Сканировать» запускает камеру прямо в «Тела 2.0». Снимать фото и настраивать «Команды» не требуется. Разреши доступ к камере для сайта в Safari при первом запуске. На некоторых моделях распознавание может зависеть от освещения и фокуса. После распознавания корректного кода камера закрывается сразу. Затем откроется карточка товара с КБЖУ и подтверждением порции.</p><button class="secondary" type="button" data-action="open-scanner">▥ Сканировать сейчас</button></section><section class="small-card"><h2>Мои продукты</h2><p class="note">Раздел из нижнего меню удалён, но твои сохранённые продукты доступны для рецептов и ручного ввода.</p><button class="secondary" type="button" data-action="new-food">+ Добавить продукт вручную</button><div style="max-height:350px;overflow:auto;margin-top:12px">${foodCards(state.foods)}</div></section><section class="small-card"><h2>Твои данные</h2><p class="note">Дневник, измерения веса, рецепты и фото еды хранятся локально на iPhone в данных этого сайта. Названия продуктов и штрихкоды передаются в Open Food Facts при поиске. Фотографии блюд не отправляются в сеть.</p><div class="stack"><button class="secondary" data-action="export">Скачать резервную копию</button><button class="secondary" data-action="native-import">Восстановить из копии</button></div><p class="note">Если удалить данные сайта Safari или очистить хранилище приложения, записи могут быть потеряны. Регулярно сохраняй резервную копию.</p></section><section class="small-card"><h2>Тело 2.0 на экране Домой</h2><p class="note">Открой размещённый по HTTPS адрес этого приложения в Safari, затем выбери «Поделиться» → «На экран Домой» → «Добавить». Scriptable и «Команды» не требуются.</p><ol class="install-steps"><li>Открой HTTPS-адрес приложения в Safari на iPhone.</li><li>Нажми значок «Поделиться» и выбери «На экран Домой».</li><li>Нажми «Добавить» и запускай «Тело 2.0» через значок.</li></ol><p class="micro">Тело 2.0.1 · PWA · часовой пояс Москва</p></section></div>`;}
+function settingsView(){return `<div class="title-row"><div><h1>Настройки</h1><p class="subtitle">Цели, сканер и сохранность дневника.</p></div></div><div class="settings-grid"><section class="small-card"><p class="micro">Версия: <strong>Тело 2.0.3</strong> · обновлено без сброса данных. База продуктов и история находятся на этом устройстве.</p></section><section class="small-card"><h2>Дневные ориентиры</h2><form id="goal-form"><label class="field"><span>Калории, ккал</span><input name="kcal" type="number" min="1" max="10000" step="1" value="${state.goals.kcal}" required></label><div class="form-grid"><label class="field"><span>Белок, минимум г</span><input name="protein" type="number" min="0" max="1000" step="1" value="${state.goals.protein}" required></label><label class="field"><span>Жиры, минимум г</span><input name="fat" type="number" min="0" max="1000" step="1" value="${state.goals.fat}" required></label></div><div class="form-grid"><label class="field"><span>Углеводы, г (необязательно)</span><input name="carbs" inputmode="decimal" type="text" placeholder="Без цели" value="${state.goals.carbs??''}"></label><label class="field"><span>Целевой вес, кг (необязательно)</span><input name="weight" inputmode="decimal" type="text" placeholder="Например, 75,3" value="${state.goals.weight??''}"></label></div><p class="micro" style="margin-bottom:15px">Ориентиры применяются ко всем дням. Средние значения за неполные дни не учитываются.</p><button class="primary" type="submit">Сохранить цели</button></form></section><section class="small-card"><h2>Сканирование продуктов</h2><p class="note">Кнопка «Сканировать» запускает камеру прямо в «Тела 2.0». Снимать фото и настраивать «Команды» не требуется. Разреши доступ к камере для сайта в Safari при первом запуске. На некоторых моделях распознавание может зависеть от освещения и фокуса. После распознавания корректного кода камера закрывается сразу. Затем откроется карточка товара с КБЖУ и подтверждением порции.</p><button class="secondary" type="button" data-action="open-scanner">▥ Сканировать сейчас</button></section><section class="small-card"><h2>Мои продукты</h2><p class="note">Раздел из нижнего меню удалён, но твои сохранённые продукты доступны для рецептов и ручного ввода.</p><button class="secondary" type="button" data-action="new-food">+ Добавить продукт вручную</button><div style="max-height:350px;overflow:auto;margin-top:12px">${foodCards(state.foods)}</div></section><section class="small-card"><h2>Твои данные</h2><p class="note">Дневник, измерения веса, рецепты и фото еды хранятся локально на iPhone в данных этого сайта. Названия продуктов и штрихкоды передаются в Open Food Facts при поиске. Фотографии блюд не отправляются в сеть.</p><div class="stack"><button class="secondary" data-action="export">Скачать резервную копию</button><button class="secondary" data-action="native-import">Восстановить из копии</button></div><p class="note">Если удалить данные сайта Safari или очистить хранилище приложения, записи могут быть потеряны. Регулярно сохраняй резервную копию.</p></section><section class="small-card"><h2>Тело 2.0 на экране Домой</h2><p class="note">Открой размещённый по HTTPS адрес этого приложения в Safari, затем выбери «Поделиться» → «На экран Домой» → «Добавить». Scriptable и «Команды» не требуются.</p><ol class="install-steps"><li>Открой HTTPS-адрес приложения в Safari на iPhone.</li><li>Нажми значок «Поделиться» и выбери «На экран Домой».</li><li>Нажми «Добавить» и запускай «Тело 2.0» через значок.</li></ol><p class="micro">Тело 2.0.1 · PWA · часовой пояс Москва</p></section></div>`;}
 function showDialog(title,body){$('#dialog-title').textContent=title;$('#dialog-body').innerHTML=body;if(!$('#editor').open)$('#editor').showModal();}
 function closeDialog(){if(!busy)$('#editor').close();}
 $('#close-dialog').onclick=closeDialog;
