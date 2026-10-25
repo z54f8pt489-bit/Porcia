@@ -1,0 +1,21 @@
+.fc-card{margin:22px 0;border-left:4px solid #a4b99b;padding:20px;background:#fffef9}
+.fc-card.fc-positive{border-left-color:#528560;background:#f5f8ed}.fc-card.fc-attention{border-left-color:#c0a56a;background:#fbf8ef}
+.fc-eyebrow{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#6d7b69;margin-bottom:10px}
+.fc-card h2{font-size:22px;line-height:1.25;margin-bottom:15px}.fc-card p{font-size:13px;line-height:1.65;margin:10px 0;overflow-wrap:anywhere}
+.fc-praise>span{color:#528560;font-weight:700}.fc-focus{padding:12px 14px;background:#f2eada;border-radius:13px;color:#635536}.fc-focus strong{font-weight:650}
+.fc-card .fc-caveat{font-size:11px;color:#778178;margin-top:15px}.fc-card .fc-next{font-size:12px;color:#536e54;border-top:1px solid #e3e7da;padding-top:12px}
+.fc-details{border-top:1px solid #e3e7da;margin-top:14px;padding-top:11px;font-size:12px}.fc-details summary{cursor:pointer;color:#49684b}.fc-details p{font-size:12px}.fc-details a{font-size:12px}
+.fc-entry-hint{display:block;font-size:11px;line-height:1.5;margin-top:7px;color:#778178;max-width:540px}.fc-entry-hint.fc-positive{color:#567553}.fc-entry-hint.fc-attention{color:#977546}
+.entry>div:nth-child(1),.entry>div:nth-child(2){min-width:0}.entry-title{overflow-wrap:anywhere}
+.fc-switch{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}.fc-switch button{font-size:12px;border:1px solid #dce4d5;background:transparent;border-radius:10px;padding:9px 12px;color:#5c715e;min-height:40px}.fc-switch button[aria-pressed=true]{background:#e6eddc;color:#264d33;border-color:#aabd9f}
+.fc-days{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:7px;margin:16px 0}.fc-day{border:1px solid #e4e8dd;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:4px;font-size:11px;min-width:0}.fc-day strong{font-size:12px}.fc-day span{color:#687d67}.fc-day small{font-size:10px;color:#977546}
+@media(max-width:520px){.fc-card{padding:17px;margin:18px 0}.fc-card h2{font-size:21px}.fc-days{grid-template-columns:repeat(2,minmax(0,1fr))}.fc-entry-hint{font-size:10px}.entry{align-items:flex-start}.entry-values{padding-top:1px}}
+.fc-recipe-ideas{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:16px 0}
+.fc-recipe-card{padding:16px;border:1px solid #dce5d3;border-radius:15px;background:#fffef9;min-width:0}
+.fc-recipe-card h3{font-size:16px;line-height:1.4;margin:5px 0}.fc-card .fc-recipe-reason,.fc-recipe-reason{font-size:11px;color:#6c805e;line-height:1.5;margin:0 0 7px}
+.fc-card .fc-recipe-meta{font-size:11px;color:#778178;margin:8px 0 13px}.fc-recipe-card .secondary{font-size:12px;min-height:44px;padding:9px 13px}
+.fc-recipe-detail>p{font-size:13px;line-height:1.65;margin:10px 0 16px}.fc-recipe-detail h3{font-size:17px;margin:20px 0 12px}
+.fc-recipe-nutrition{display:flex;flex-direction:column;gap:5px;padding:15px;border-radius:14px;background:#e9f0e0}.fc-recipe-nutrition strong{font-size:22px}.fc-recipe-nutrition span{font-size:13px}.fc-recipe-nutrition small{font-size:11px;color:#6f7e66}
+.fc-ingredients{list-style:none;margin:0;padding:0}.fc-ingredients li{display:flex;justify-content:space-between;align-items:baseline;gap:15px;border-bottom:1px solid #e1e5d9;padding:11px 0;font-size:13px}.fc-ingredients span{min-width:0}.fc-ingredients strong{font-size:12px;text-align:right;flex:0 0 43%;font-weight:600}
+.fc-recipe-steps{padding-left:21px;margin:0 0 20px}.fc-recipe-steps li{font-size:13px;line-height:1.7;margin:0 0 13px;padding-left:4px}
+@media(max-width:520px){.fc-recipe-ideas{grid-template-columns:1fr}.fc-recipe-detail h3{font-size:16px}.fc-ingredients li{gap:10px}}

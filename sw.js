@@ -1,5 +1,5 @@
-const CACHE='telo-pwa-v2.0.7-clean-report';
-const CORE=['./','./index.html','./pwa-bridge.js','./motivation-bank.js','./vendor/zxing.min.js','./manifest.webmanifest','./icon-192.png','./icon-512.svg','./favicon.png'];
+const CACHE='telo-pwa-v2.0.8-food-coach-recipes';
+const CORE=['./','./index.html','./pwa-bridge.js','./food-coach.js?v=2.0.8','./food-coach-recipes.js?v=2.0.8','./food-coach-ui.js?v=2.0.8','./food-coach.css?v=2.0.8','./motivation-bank.js','./vendor/zxing.min.js','./manifest.webmanifest','./icon-192.png','./icon-512.svg','./favicon.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
 });
