@@ -56,6 +56,6 @@ test('Существующие скрипты компилируются; нов
  assert.ok(html.includes('foodCoachStart();'));
  assert.ok(!html.includes("['history','История']"));assert.ok(!html.includes('Скопируй отчёт в наш чат'));
  const sw=fs.readFileSync(require.resolve('../sw.js'),'utf8');
- for(const file of ['food-coach.js','food-coach-ui.js','food-coach-recipes.js','food-coach.css'])assert.ok(sw.includes(file+'?v=2.0.10'));
+ for(const file of ['food-coach.js','food-coach-ui.js','food-coach-recipes.js','food-coach.css'])assert.ok(sw.includes(file+'?v=2.0.11'));
  assert.ok(html.includes('TELO_MOTIVATION_COOLDOWN_MS=2*60*60*1000'));
 });

@@ -103,7 +103,7 @@
     return {code,name,brand:String(p.brands||'').slice(0,100),kcal:rnd(kcal),protein:rnd(protein),fat:rnd(fat),carbs:rnd(carbs),incomplete:values.some(v=>v===null),russian:(p.countries_tags||[]).some(c=>/russia|россия/i.test(c))};
   }
   const barcodeCache=new Map();
-  async function lookupBarcode(raw){
+  async function lookupPrimaryBarcode(raw){
     const parsed=TeloBarcode.parse(String(raw||''));
     if(!parsed)throw Error('В этом коде не найден корректный номер товара. Покажи штрихкод или Data Matrix на упаковке.');
     const verified=window.TeloVerifiedProducts?.lookup(parsed.code);
@@ -131,6 +131,17 @@
     }
     // A missing product is a normal lookup result, not an internet connection error.
     barcodeCache.set(parsed.gtin14,{food:null,until:Date.now()+60000});
+    return null;
+  }
+  async function lookupBarcode(raw){
+    let food=null,primaryError=null;
+    try{food=await lookupPrimaryBarcode(raw);}catch(e){primaryError=e;}
+    if(food)return food;
+    if(window.TeloOnlineCatalog?.isConfigured()){
+      const extra=await window.TeloOnlineCatalog.lookup(raw);
+      if(extra)return extra;
+    }
+    if(primaryError)throw primaryError;
     return null;
   }
   async function searchFoods(term){

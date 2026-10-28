@@ -133,8 +133,35 @@ const qa=path.join(process.env.RUNNER_TEMP||path.dirname(root),'telo-food-coach-
    await page.locator('[data-action="cancel-scan"]').click();
   }
   assert.equal(requests.length,beforeVerified);assert.equal(await page.evaluate(()=>state.entries.length),entriesBeforeVerified);
+  const connectionToken='private_lookup_01234567890123456789',extraRequests=[];
+  await page.route('https://telo.user.workers.dev/**',route=>{
+   const request=route.request(),url=new URL(request.url());
+   const headers={'Access-Control-Allow-Origin':'http://127.0.0.1','Access-Control-Allow-Headers':'Authorization','Access-Control-Allow-Methods':'GET, OPTIONS','Content-Type':'application/json'};
+   if(request.method()==='OPTIONS')return route.fulfill({status:204,headers});
+   extraRequests.push(url.href);assert.equal(request.headers().authorization,'Bearer '+connectionToken);
+   return route.fulfill({status:200,headers,body:JSON.stringify(url.pathname==='/health'?{status:'ok',source:'Barcode-list.ru'}:{status:'found',product:{code:'4601234567893',name:'Название из российского справочника',sourceUrl:'https://barcode-list.ru/barcode/RU/test',kcal:999}})});
+  });
+  await page.locator('[data-tab="settings"]').click();
+  await page.getByRole('button',{name:'Подключение',exact:true}).click();
+  await page.locator('#online-catalog-form [name="endpoint"]').fill('https://telo.user.workers.dev');
+  await page.locator('#online-catalog-form [name="token"]').fill(connectionToken);
+  await page.locator('#online-catalog-form button[type="submit"]').click();
+  await page.waitForFunction(()=>TeloOnlineCatalog.isConfigured());
+  await page.locator('#editor').waitFor({state:'hidden'});
+  catalogMode='missing';
+  await page.evaluate(()=>quickLookup('4601234567893'));
+  await page.locator('#scan-confirm-form').waitFor();
+  assert.equal(await page.locator('#scan-confirm-form [name="name"]').inputValue(),'Название из российского справочника');
+  assert.equal(await page.locator('#scan-confirm-form [name="kcal"]').inputValue(),'','unknown nutrition must stay empty');
+  assert.ok((await page.locator('.scan-product-source').innerText()).includes('Источник названия'));
+  assert.ok(extraRequests.some(u=>u.endsWith('/lookup?barcode=4601234567893')),'additional source must run automatically');
+  assert.ok(extraRequests.every(u=>!u.includes(connectionToken)));
+  await page.locator('[data-action="cancel-scan"]').click();
+  await page.getByRole('button',{name:'Подключение',exact:true}).click();
+  await page.locator('[data-action="catalog-disconnect"]').click();
+  assert.equal(await page.evaluate(()=>TeloOnlineCatalog.isConfigured()),false);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert.deepEqual(errors,[]);
-  console.log('Browser checks passed: mobile food feedback; EAN and GS1/QR camera decoding; 404 vs offline; saved products; both reported real products work offline with manufacturer nutrition and source links; preview does not log food; no overflow.');
+  console.log('Browser checks passed: food feedback; EAN and GS1/QR camera; both reported products offline; optional online source configuration and automatic fallback; unknown nutrition stays empty; disconnect; no overflow. External server boundary mocked; hosted server not verified.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
