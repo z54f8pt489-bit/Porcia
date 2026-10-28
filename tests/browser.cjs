@@ -57,7 +57,69 @@ const qa=path.join(process.env.RUNNER_TEMP||path.dirname(root),'telo-food-coach-
   await page.waitForFunction(()=>document.querySelectorAll('.fc-entry-hint').length===5);
   await page.reload({waitUntil:'networkidle'});
   await page.waitForFunction(()=>document.querySelectorAll('.fc-entry-hint').length===5);
+  // Run the actual scanner and catalog UI; mock only the remote catalog boundary.
+  const requests=[];let catalogMode='found';
+  await page.route('https://*.openfoodfacts.org/**',route=>{
+   requests.push(route.request().url());
+   if(catalogMode==='offline')return route.abort();
+   if(catalogMode==='missing')return route.fulfill({status:404,contentType:'application/json',body:JSON.stringify({status:0})});
+   return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({status:1,product:{code:'4607033680610',product_name_ru:'Тестовый российский творог',nutriments:{'energy-kcal_100g':120,proteins_100g:16,fat_100g:5,carbohydrates_100g:3}}})});
+  });
+  const entryCount=await page.evaluate(()=>state.entries.length);
+  await page.evaluate(()=>quickLookup(']d2\u001d0104607033680610215ABc123456789\u001d93ABCD'));
+  await page.locator('#scan-confirm-form').waitFor();
+  assert.equal(await page.locator('#scan-confirm-form [name="name"]').inputValue(),'Тестовый российский творог');
+  assert.equal(await page.locator('#scan-confirm-form [name="protein"]').inputValue(),'16');
+  assert.equal(await page.evaluate(()=>state.entries.length),entryCount,'preview must not log food');
+  assert.ok(requests.every(u=>!u.includes('ABc')&&!u.includes('93ABCD')),'only the product number may be sent');
+  await page.locator('#scan-confirm-form [name="grams"]').fill('150');
+  await page.screenshot({path:path.join(qa,'barcode-product-mobile.png'),fullPage:true});
+  await page.locator('#scan-confirm-form button[type="submit"]').click();
+  await page.waitForFunction(n=>state.entries.length===n+1,entryCount);
+  assert.equal(await page.evaluate(()=>state.entries.at(-1).kcal),180);
+  assert.equal(await page.evaluate(()=>state.foods.find(f=>f.barcode==='4607033680610')?.protein),16);
+  const requestsBeforeLocal=requests.length;catalogMode='offline';
+  await page.evaluate(()=>quickLookup('https://id.gs1.org/01/04607033680610/21/ANOTHER-SERIAL'));
+  await page.locator('#scan-confirm-form').waitFor();
+  assert.equal(requests.length,requestsBeforeLocal,'saved EAN must match Data Matrix/QR without network');
+  await page.locator('[data-action="cancel-scan"]').click();
+  catalogMode='missing';
+  await page.evaluate(()=>quickLookup('4601234567893'));
+  assert.equal(await page.locator('#dialog-title').innerText(),'Код считан, товара пока нет');
+  assert.ok(!(await page.locator('#dialog-body').innerText()).includes('Проверь соединение'));
+  await page.screenshot({path:path.join(qa,'barcode-missing-mobile.png'),fullPage:true});
+  await page.locator('#close-dialog').click();
+  catalogMode='offline';
+  await page.evaluate(()=>quickLookup('3017624010701'));
+  assert.ok((await page.locator('#dialog-body').innerText()).includes('Не удалось связаться с каталогом'));
+  await page.locator('#close-dialog').click();
+  // Feed real barcode pixels into the real camera processing loop through a canvas MediaStream.
+  // No camera hardware or external images are used, and the ZXing frame decoder is not mocked.
+  const fixtures=JSON.parse(fs.readFileSync(path.join(root,'tests/fixtures/product-barcodes.json'),'utf8'));
+  for(const fixture of fixtures.filter(f=>f.format!=='EAN_13')){
+   const decoded=await page.evaluate(async fixture=>{
+    const canvas=document.createElement('canvas');canvas.width=1000;canvas.height=700;
+    const ctx=canvas.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,1000,700);ctx.fillStyle='black';
+    const scale=8,x0=Math.floor((1000-fixture.rows[0].length*scale)/2),y0=Math.floor((700-fixture.rows.length*scale)/2);
+    const draw=()=>{for(let y=0;y<fixture.rows.length;y++)for(let x=0;x<fixture.rows[y].length;x++)if(fixture.rows[y][x]==='1')ctx.fillRect(x0+x*scale,y0+y*scale,scale,scale);};
+    // Reproduce six empty frames before the code appears. Minified "NotFound" exceptions
+    // used to turn off the 2D decoder after four frames.
+    const proto=ZXing.MultiFormatReader.prototype,original=proto.decodeWithState;let frames=0;
+    proto.decodeWithState=function(bitmap){if(++frames===7)draw();return original.call(this,bitmap);};
+    const stream=canvas.captureStream(10);
+    Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{getUserMedia:async()=>stream}});
+    window.BarcodeDetector=undefined;
+    const promise=startCameraScanner();
+    try{
+     const code=await Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(Error('Camera decode timeout: '+fixture.name)),12000))]);
+     return {code,frames,stopped:stream.getTracks().every(t=>t.readyState==='ended')};
+    }finally{proto.decodeWithState=original;stream.getTracks().forEach(t=>t.stop());document.querySelector('#camera-cancel')?.click();}
+   },fixture);
+   assert.equal(decoded.code,fixture.code,fixture.name);assert.ok(decoded.frames>=7);assert.equal(decoded.stopped,true);
+   assert.equal(await page.locator('#porcia-camera-overlay').count(),0);
+  }
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert.deepEqual(errors,[]);
-  console.log('Browser checks passed: mobile daily/weekly feedback, no overflow, add entry, persisted after reload.');
+  console.log('Browser checks passed: mobile food feedback; Russian EAN and GS1/QR lookup; 404 vs offline; saved product offline; actual Data Matrix and QR camera decoding; stopped camera tracks; no overflow.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

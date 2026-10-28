@@ -21,8 +21,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Check food feedback rules and app integration
-        run: node --test tests/food-coach.test.cjs tests/app-integration.test.cjs tests/recipes.test.cjs
       - name: Bundle barcode decoder (ZXing 0.21.3)
         shell: bash
         run: |
@@ -33,6 +31,8 @@ jobs:
           sha256sum vendor/zxing.min.js
           # Upstream license for ZXing, stored alongside its bundled source.
           curl --fail --location --retry 2 'https://raw.githubusercontent.com/zxing-js/library/master/LICENSE' -o vendor/ZXING-LICENSE.txt || curl --fail --location --retry 2 'https://unpkg.com/@zxing/library@0.21.3/LICENSE' -o vendor/ZXING-LICENSE.txt
+      - name: Check nutrition rules, product codes and catalog responses
+        run: node --test tests/*.test.cjs
       - name: Check mobile browser before publishing
         shell: bash
         run: |

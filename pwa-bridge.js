@@ -81,10 +81,11 @@
       return c.toDataURL('image/jpeg',0.72);
     }finally {URL.revokeObjectURL(url)}
   };
-  const fetchJSON=async url=>{
+  const fetchJSON=async (url,{notFound=false}={})=>{
     const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),14000);
     try{const r=await fetch(url,{headers:{Accept:'application/json'},signal:controller.signal});
-      if(!r.ok)throw Error('HTTP '+r.status);return await r.json();}
+      if(notFound && r.status===404)return {status:0};
+      if(!r.ok){const error=Error('HTTP '+r.status);error.status=r.status;throw error;}return await r.json();}
     finally{clearTimeout(timer);}
   };
   const urlsFor=(path)=>['https://world.openfoodfacts.org','https://ru.openfoodfacts.org'].map(h=>h+path);
@@ -101,14 +102,34 @@
     const rnd=v=>v===null?null:Math.round(v*10)/10;
     return {code,name,brand:String(p.brands||'').slice(0,100),kcal:rnd(kcal),protein:rnd(protein),fat:rnd(fat),carbs:rnd(carbs),incomplete:values.some(v=>v===null),russian:(p.countries_tags||[]).some(c=>/russia|россия/i.test(c))};
   }
-  async function lookupBarcode(code){
-    code=String(code||'').trim();const path='/api/v2/product/'+encodeURIComponent(code)+'.json?fields=code,product_name,product_name_ru,brands,nutriments,countries_tags';
-    let err;
-    for(const u of urlsFor(path))try{
-      const data=await fetchJSON(u);if(data.status===0||!data.product)return null;
-      return product({...data.product,code:data.product.code||code},true);
-    }catch(e){err=e;}
-    throw Error('Open Food Facts недоступен. Проверь соединение: '+(err?.message||'нет ответа'));
+  const barcodeCache=new Map();
+  async function lookupBarcode(raw){
+    const parsed=TeloBarcode.parse(String(raw||''));
+    if(!parsed)throw Error('В этом коде не найден корректный номер товара. Покажи штрихкод или Data Matrix на упаковке.');
+    const cached=barcodeCache.get(parsed.gtin14);
+    if(cached&&cached.until>Date.now())return cached.food;
+    let err=null;
+    for(const code of TeloBarcode.lookupCodes(parsed.code)){
+      const path='/api/v2/product/'+encodeURIComponent(code)+'.json?lc=ru&fields=code,product_name,product_name_ru,generic_name_ru,brands,nutriments,countries_tags';
+      let answered=false;
+      for(const u of urlsFor(path))try{
+        const data=await fetchJSON(u,{notFound:true});
+        if(data.status===0){answered=true;break;}
+        if(!data.product)throw Error('Каталог вернул неполную карточку');
+        if(data.product.code&&!TeloBarcode.sameProduct(String(data.product.code),parsed.code))throw Error('Каталог вернул другой номер товара');
+        const food=product({...data.product,code:parsed.code},true);
+        if(!food)throw Error('В карточке товара некорректные данные');
+        barcodeCache.set(parsed.gtin14,{food,until:Date.now()+300000});
+        return food;
+      }catch(e){
+        if(e.status===429)throw Error('Каталог временно ограничил частые запросы. Попробуй снова через минуту.');
+        err=e;
+      }
+      if(!answered)throw Error('Не удалось связаться с каталогом продуктов. Попробуй позже'+(err?.message?' ('+err.message+')':'')+'.');
+    }
+    // A missing product is a normal lookup result, not an internet connection error.
+    barcodeCache.set(parsed.gtin14,{food:null,until:Date.now()+60000});
+    return null;
   }
   async function searchFoods(term){
     const q=String(term||'').trim().slice(0,100);if(q.length<2)throw Error('Введи хотя бы 2 буквы');
