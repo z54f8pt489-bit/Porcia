@@ -2,6 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');const path=require('node:path');const vm=require('node:vm');
 const B=require('../barcode-utils.js');
+const V=require('../verified-products.js');
 const root=path.resolve(__dirname,'..');
 const code='4607033680610',gtin='04607033680610';
 const gs1='01'+gtin+'215ABc123456789\u001d93ABCD';
@@ -26,12 +27,29 @@ test('Посторонний QR, чек, неверная контрольная
  for(const raw of ['00000000','4607033680611','https://example.org/'+code,'t=20261028T1400&s=523.00&fn=123456789&i=34&fp=456&n=1','https://example.org/?code='+gs1,'Гречка '+code,'javascript:alert(1)','https://example.org/01/04607033680611','1'.repeat(5000)])assert.equal(B.parse(raw),null,raw.slice(0,80));
 });
 function bridge(fetch){
- const ctx={console,URL,AbortController,setTimeout,clearTimeout,Date,Map,TeloBarcode:B,fetch,navigator:{}};
+ const ctx={console,URL,AbortController,setTimeout,clearTimeout,Date,Map,TeloBarcode:B,TeloVerifiedProducts:V,fetch,navigator:{}};
  ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'pwa-bridge.js'),'utf8'),ctx);
  return raw=>ctx.porciaCall('lookupBarcode',{code:raw});
 }
 const response=(status,data)=>({ok:status>=200&&status<300,status,json:async()=>data});
 const product=(code)=>({status:1,product:{code,product_name_ru:'Тестовый российский продукт',brands:'Тест',nutriments:{'energy-kcal_100g':120,proteins_100g:16,fat_100g:5,carbohydrates_100g:3}}});
+test('Два кода со скриншотов открывают проверенные карточки без сети, включая Data Matrix',async()=>{
+ let calls=0;const lookup=bridge(async()=>{calls++;throw Error('Offline');});
+ const cases=[['4602358009481',[121,16,5,3],'kizk.ru'],['4607033689408',[120,8,5.6,9.8],'maguro-tuna.ru']];
+ for(const [ean,values,host] of cases){
+  for(const raw of [ean,'0'+ean,'01'+'0'+ean+'21ABC123\u001d93ABCD']){
+   const food=await lookup(raw);assert.equal(food.code,ean);assert.deepEqual([food.kcal,food.protein,food.fat,food.carbs],values);
+   assert.equal(new URL(food.sourceUrl).hostname,host);assert.equal(food.incomplete,false);
+  }
+ }
+ assert.equal(calls,0);assert.equal(V.lookup('4602358009498'),null,'9% curd must not get 5% nutrition');
+ assert.equal(V.lookup(code),null,'unknown products must continue through the real catalog lookup');
+});
+test('Проверенные российские карточки участвуют в поиске; изменение результата не портит справочник',()=>{
+ const found=V.search('творог кореновки 5%');assert.equal(found.length,1);assert.equal(found[0].code,'4602358009481');
+ assert.equal(V.search('магуРО сальса')[0].code,'4607033689408');assert.equal(V.search('творог 9%').length,0);
+ found[0].protein=999;assert.equal(V.lookup('4602358009481').protein,16);
+});
 test('HTTP 404 и status:0 означают отсутствие карточки; повторный код не тратит запросы',async()=>{
  const calls=[];const lookup=bridge(async u=>{calls.push(u);return response(404,{});});
  assert.equal(await lookup(gs1),null);

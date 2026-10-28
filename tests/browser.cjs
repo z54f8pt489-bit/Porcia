@@ -118,8 +118,23 @@ const qa=path.join(process.env.RUNNER_TEMP||path.dirname(root),'telo-food-coach-
    assert.equal(decoded.code,fixture.code,fixture.name);assert.ok(decoded.frames>=7);assert.equal(decoded.stopped,true);
    assert.equal(await page.locator('#porcia-camera-overlay').count(),0);
   }
+  // The two actual user-reported products must no longer depend on Open Food Facts coverage.
+  const beforeVerified=requests.length,entriesBeforeVerified=await page.evaluate(()=>state.entries.length);
+  for(const item of [
+   {code:'4602358009481',name:'Коровка из Кореновки',kcal:'121',protein:'16',fat:'5',carbs:'3',host:'kizk.ru'},
+   {code:'4607033689408',name:'Магуро',kcal:'120',protein:'8',fat:'5.6',carbs:'9.8',host:'maguro-tuna.ru'}
+  ]){
+   await page.evaluate(code=>quickLookup('01'+'0'+code+'21TEST-SERIAL\u001d93ABCD'),item.code);
+   await page.locator('#scan-confirm-form').waitFor();
+   assert.ok((await page.locator('#scan-confirm-form [name="name"]').inputValue()).includes(item.name));
+   for(const key of ['kcal','protein','fat','carbs'])assert.equal(await page.locator('#scan-confirm-form [name="'+key+'"]').inputValue(),item[key]);
+   assert.equal(new URL(await page.locator('.scan-product-source a').getAttribute('href')).hostname,item.host);
+   await page.screenshot({path:path.join(qa,'verified-'+item.code+'-mobile.png'),fullPage:true});
+   await page.locator('[data-action="cancel-scan"]').click();
+  }
+  assert.equal(requests.length,beforeVerified);assert.equal(await page.evaluate(()=>state.entries.length),entriesBeforeVerified);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert.deepEqual(errors,[]);
-  console.log('Browser checks passed: mobile food feedback; Russian EAN and GS1/QR lookup; 404 vs offline; saved product offline; actual Data Matrix and QR camera decoding; stopped camera tracks; no overflow.');
+  console.log('Browser checks passed: mobile food feedback; EAN and GS1/QR camera decoding; 404 vs offline; saved products; both reported real products work offline with manufacturer nutrition and source links; preview does not log food; no overflow.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -106,6 +106,8 @@
   async function lookupBarcode(raw){
     const parsed=TeloBarcode.parse(String(raw||''));
     if(!parsed)throw Error('В этом коде не найден корректный номер товара. Покажи штрихкод или Data Matrix на упаковке.');
+    const verified=window.TeloVerifiedProducts?.lookup(parsed.code);
+    if(verified)return verified;
     const cached=barcodeCache.get(parsed.gtin14);
     if(cached&&cached.until>Date.now())return cached.food;
     let err=null;
@@ -133,12 +135,13 @@
   }
   async function searchFoods(term){
     const q=String(term||'').trim().slice(0,100);if(q.length<2)throw Error('Введи хотя бы 2 буквы');
+    const verified=window.TeloVerifiedProducts?.search(q)||[];
     const path='/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&page_size=40&fields=code,product_name,product_name_ru,brands,nutriments,countries_tags';
     let data=null,err;
     for(const u of urlsFor(path))try{data=await fetchJSON(u);break;}catch(e){err=e;}
-    if(!data)throw Error('Интернет-база недоступна: '+(err?.message||'нет ответа'));
-    const codes=new Set(), results=[];
-    for(const p of data.products||[]){const f=product(p,true);if(!f||codes.has(f.code)||[f.kcal,f.protein,f.fat,f.carbs].every(v=>v===null))continue;codes.add(f.code);results.push(f);}
+    if(!data){if(verified.length)return verified;throw Error('Интернет-база недоступна: '+(err?.message||'нет ответа'));}
+    const codes=new Set(verified.map(f=>TeloBarcode.parse(f.code)?.gtin14||f.code)), results=[...verified];
+    for(const p of data.products||[]){const f=product(p,true);const identity=f&&(TeloBarcode.parse(f.code)?.gtin14||f.code);if(!f||codes.has(identity)||[f.kcal,f.protein,f.fat,f.carbs].every(v=>v===null))continue;codes.add(identity);results.push(f);}
     results.sort((a,b)=>Number(b.russian)-Number(a.russian));return results.slice(0,24);
   }
   async function exportFile(p){

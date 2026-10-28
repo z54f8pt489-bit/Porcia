@@ -1,5 +1,5 @@
-const CACHE='telo-pwa-v2.0.9-product-codes';
-const CORE=['./','./index.html','./barcode-utils.js?v=2.0.9','./pwa-bridge.js?v=2.0.9','./food-coach.js?v=2.0.9','./food-coach-recipes.js?v=2.0.9','./food-coach-ui.js?v=2.0.9','./food-coach.css?v=2.0.9','./motivation-bank.js','./vendor/zxing.min.js','./manifest.webmanifest','./icon-192.png','./icon-512.svg','./favicon.png'];
+const CACHE='telo-pwa-v2.0.10-verified-products';
+const CORE=['./','./index.html','./barcode-utils.js?v=2.0.10','./verified-products.js?v=2.0.10','./pwa-bridge.js?v=2.0.10','./food-coach.js?v=2.0.10','./food-coach-recipes.js?v=2.0.10','./food-coach-ui.js?v=2.0.10','./food-coach.css?v=2.0.10','./motivation-bank.js','./vendor/zxing.min.js','./manifest.webmanifest','./icon-192.png','./icon-512.svg','./favicon.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
 });
